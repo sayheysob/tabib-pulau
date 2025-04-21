@@ -30,7 +30,7 @@ export default function Home() {
       setSubmission({
         ...form,
         timestamp: new Date(),
-        remainingPegagan: 5000 - form.perban,
+        remainingPegagan: 5000 - form.pegagan,
         remainingPerban: 5000 - form.perban,
         remainingPainkiller: 5000 - form.painkiller,
         remainingBetadine: 5000 - form.betadine,
@@ -86,7 +86,7 @@ export default function Home() {
                     <th colSpan="2">Barang yang Diambil</th>
                   </tr>
                   <tr>
-                    <td>• Pegagan: {submission.perban} unit</td>
+                    <td>• Pegagan: {submission.pegagan} unit</td>
                     <td></td>
                   </tr>
                   <tr>
@@ -116,7 +116,7 @@ export default function Home() {
                     <th colSpan="2">Sisa Stok</th>
                   </tr>
                   <tr>
-                    <td>• Pegagan: {submission.remainingPerban} unit</td>
+                    <td>• Pegagan: {submission.remainingPegagan} unit</td>
                     <td></td>
                   </tr>
                   <tr>
@@ -188,8 +188,8 @@ export default function Home() {
                   id="pegagan"
                   min="0"
                   max="5000"
-                  value={form.perban}
-                  onChange={e => setForm({...form, perban: parseInt(e.target.value) || 0})}
+                  value={form.pegagan}
+                  onChange={e => setForm({...form, pegagan: parseInt(e.target.value) || 0})}
                   required
                 />
               </div>
@@ -205,7 +205,6 @@ export default function Home() {
                   onChange={e => setForm({...form, perban: parseInt(e.target.value) || 0})}
                   required
                 />
-              </div>
               </div>
               
               <div className="form-group">
