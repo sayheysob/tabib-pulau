@@ -1,35 +1,41 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function Home() {
   const [form, setForm] = useState({
     pemohon: '',
     penanggungJawab: '',
-    sateKlenger: 0,
-    manchepLotte: 0,
+    pegagan: 0,
+    perban: 0,
+    painkiller: 0,
+    betadine: 0,
+    zatBesi: 0,
+    sayurKol: 0
   });
 
   const [submission, setSubmission] = useState(null);
   const [currentTime, setCurrentTime] = useState(new Date());
 
-  // Update time every minute
-  setInterval(() => {
-    setCurrentTime(new Date());
-  }, 60000);
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 60000);
+    return () => clearInterval(timer);
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('/api/submit', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
-      });
-      const data = await response.json();
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 500));
       setSubmission({
         ...form,
         timestamp: new Date(),
-        remainingSateKlenger: 150 - form.sateKlenger,
-        remainingManchepLotte: 150 - form.manchepLotte
+        remainingPegagan: 5000 - form.perban,
+        remainingPerban: 5000 - form.perban,
+        remainingPainkiller: 5000 - form.painkiller,
+        remainingBetadine: 5000 - form.betadine,
+        remainingZatBesi: 5000 - form.zatBesi,
+        remainingSayurKol: 5000 - form.sayurKol
       });
     } catch (error) {
       alert('Error submitting data');
@@ -53,7 +59,7 @@ export default function Home() {
     <div className="app-container">
       <div className="discord-app">
         <div className="header">
-          <h1>Trans Pantry Stock APP</h1>
+          <h1>Medical Supplies Management APP</h1>
           <div className="time">{formatTime(currentTime)}</div>
         </div>
         
@@ -80,52 +86,64 @@ export default function Home() {
                     <th colSpan="2">Barang yang Diambil</th>
                   </tr>
                   <tr>
-                    <td>• Sate Klenger: {submission.sateKlenger} unit</td>
+                    <td>• Pegagan: {submission.perban} unit</td>
                     <td></td>
                   </tr>
                   <tr>
-                    <td>• Manchep Lotte: {submission.manchepLotte} unit</td>
+                    <td>• Perban: {submission.perban} unit</td>
                     <td></td>
                   </tr>
-                </table>
-                
-                <table>
                   <tr>
-                    <th colSpan="2">Sisa Stok Makanan</th>
-                  </tr>
-                  <tr>
-                    <td>• Sate Klenger: {submission.remainingSateKlenger} unit</td>
+                    <td>• Painkiller: {submission.painkiller} unit</td>
                     <td></td>
                   </tr>
-                </table>
-                
-                <table>
                   <tr>
-                    <th colSpan="2">Sisa Stok Minuman</th>
+                    <td>• Betadine: {submission.betadine} unit</td>
+                    <td></td>
                   </tr>
                   <tr>
-                    <td>• Manchep Lotte: {submission.remainingManchepLotte} unit</td>
+                    <td>• Zat Besi: {submission.zatBesi} unit</td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>• Sayur Kol: {submission.sayurKol} unit</td>
                     <td></td>
                   </tr>
                 </table>
                 
                 <table>
                   <tr>
-                    <th colSpan="2">Total Stok Tersisa</th>
+                    <th colSpan="2">Sisa Stok</th>
                   </tr>
                   <tr>
-                    <td>Total Makanan: {submission.remainingSateKlenger} unit</td>
+                    <td>• Pegagan: {submission.remainingPerban} unit</td>
                     <td></td>
                   </tr>
                   <tr>
-                    <td>Total Minuman: {submission.remainingManchepLotte} unit</td>
+                    <td>• Perban: {submission.remainingPerban} unit</td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>• Painkiller: {submission.remainingPainkiller} unit</td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>• Betadine: {submission.remainingBetadine} unit</td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>• Zat Besi: {submission.remainingZatBesi} unit</td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>• Sayur Kol: {submission.remainingSayurKol} unit</td>
                     <td></td>
                   </tr>
                 </table>
               </div>
               
               <div className="footer">
-                <p>Trans Pantry - Sistem Management Inventaris • Today at {formatTime(submission.timestamp)}</p>
+                <p>Medical Supplies - Sistem Management Inventaris • Today at {formatTime(submission.timestamp)}</p>
               </div>
               
               <button 
@@ -164,27 +182,80 @@ export default function Home() {
               </div>
               
               <div className="form-group">
-                <label htmlFor="sateKlenger">Sate Klenger (unit)</label>
+                <label htmlFor="pegagan">Pegagan (unit)</label>
                 <input 
                   type="number" 
-                  id="sateKlenger"
+                  id="pegagan"
                   min="0"
-                  max="150"
-                  value={form.sateKlenger}
-                  onChange={e => setForm({...form, sateKlenger: parseInt(e.target.value) || 0})}
+                  max="5000"
+                  value={form.perban}
+                  onChange={e => setForm({...form, perban: parseInt(e.target.value) || 0})}
                   required
                 />
               </div>
               
               <div className="form-group">
-                <label htmlFor="manchepLotte">Manchep Lotte (unit)</label>
+                <label htmlFor="perban">Perban (unit)</label>
                 <input 
                   type="number" 
-                  id="manchepLotte"
+                  id="perban"
                   min="0"
-                  max="150"
-                  value={form.manchepLotte}
-                  onChange={e => setForm({...form, manchepLotte: parseInt(e.target.value) || 0})}
+                  max="5000"
+                  value={form.perban}
+                  onChange={e => setForm({...form, perban: parseInt(e.target.value) || 0})}
+                  required
+                />
+              </div>
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="painkiller">Painkiller (unit)</label>
+                <input 
+                  type="number" 
+                  id="painkiller"
+                  min="0"
+                  max="5000"
+                  value={form.painkiller}
+                  onChange={e => setForm({...form, painkiller: parseInt(e.target.value) || 0})}
+                  required
+                />
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="betadine">Betadine (unit)</label>
+                <input 
+                  type="number" 
+                  id="betadine"
+                  min="0"
+                  max="5000"
+                  value={form.betadine}
+                  onChange={e => setForm({...form, betadine: parseInt(e.target.value) || 0})}
+                  required
+                />
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="zatBesi">Zat Besi (unit)</label>
+                <input 
+                  type="number" 
+                  id="zatBesi"
+                  min="0"
+                  max="5000"
+                  value={form.zatBesi}
+                  onChange={e => setForm({...form, zatBesi: parseInt(e.target.value) || 0})}
+                  required
+                />
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="sayurKol">Sayur Kol (unit)</label>
+                <input 
+                  type="number" 
+                  id="sayurKol"
+                  min="0"
+                  max="5000"
+                  value={form.sayurKol}
+                  onChange={e => setForm({...form, sayurKol: parseInt(e.target.value) || 0})}
                   required
                 />
               </div>
