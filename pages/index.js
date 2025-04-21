@@ -59,7 +59,7 @@ export default function Home() {
     <div className="app-container">
       <div className="discord-app">
         <div className="header">
-          <h1>Medical Supplies Management APP</h1>
+          <h1>Withdraw Tabib APP</h1>
           <div className="time">{formatTime(currentTime)}</div>
         </div>
         
