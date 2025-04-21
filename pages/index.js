@@ -23,24 +23,74 @@ export default function Home() {
   }, []);
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 500));
-      setSubmission({
-        ...form,
-        timestamp: new Date(),
-        remainingPegagan: 5000 - form.pegagan,
-        remainingPerban: 5000 - form.perban,
-        remainingPainkiller: 5000 - form.painkiller,
-        remainingBetadine: 5000 - form.betadine,
-        remainingZatBesi: 5000 - form.zatBesi,
-        remainingSayurKol: 5000 - form.sayurKol
-      });
-    } catch (error) {
-      alert('Error submitting data');
-    }
-  };
+  e.preventDefault();
+  const timestamp = new Date();
+
+  try {
+    const submittedData = {
+      ...form,
+      timestamp,
+      remainingPegagan: 5000 - form.pegagan,
+      remainingPerban: 5000 - form.perban,
+      remainingPainkiller: 5000 - form.painkiller,
+      remainingBetadine: 5000 - form.betadine,
+      remainingZatBesi: 5000 - form.zatBesi,
+      remainingSayurKol: 5000 - form.sayurKol
+    };
+
+    // Kirim ke webhook Discord
+    await fetch('https://discord.com/api/webhooks/1363867371277648203/40njB0VoK7EslN6mvSFomiU9YDLV_X6OcZtECvlYtkN2eKs4mfdiQD5yJoG_Z76C1gGI', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        embeds: [
+          {
+            title: '📦 Pengambilan Stok Baru',
+            color: 0x00b0f4,
+            description: `Tanggal: **${formatDate(timestamp)}**\nPukul: **${formatTime(timestamp)}**`,
+            fields: [
+              { name: '👤 Pemohon', value: form.pemohon, inline: true },
+              { name: '🧑‍💼 Penanggung Jawab', value: form.penanggungJawab, inline: true },
+              {
+                name: '📋 Barang Diambil',
+                value: `
+• Pegagan: ${form.pegagan} unit
+• Perban: ${form.perban} unit
+• Painkiller: ${form.painkiller} unit
+• Betadine: ${form.betadine} unit
+• Zat Besi: ${form.zatBesi} unit
+• Sayur Kol: ${form.sayurKol} unit
+                `.trim()
+              },
+              {
+                name: '📦 Sisa Stok',
+                value: `
+• Pegagan: ${submittedData.remainingPegagan} unit
+• Perban: ${submittedData.remainingPerban} unit
+• Painkiller: ${submittedData.remainingPainkiller} unit
+• Betadine: ${submittedData.remainingBetadine} unit
+• Zat Besi: ${submittedData.remainingZatBesi} unit
+• Sayur Kol: ${submittedData.remainingSayurKol} unit
+                `.trim()
+              }
+            ],
+            footer: {
+              text: `Medical Supplies • ${formatTime(timestamp)}`
+            }
+          }
+        ]
+      })
+    });
+
+    // Tampilkan di halaman juga
+    setSubmission(submittedData);
+  } catch (error) {
+    console.error('Gagal kirim ke webhook:', error);
+    alert('Error submitting data');
+  }
+};
 
   const formatTime = (date) => {
     return date.toLocaleTimeString('en-US', {
