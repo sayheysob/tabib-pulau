@@ -1,0 +1,7 @@
+pantry-report/
+├── pages/
+│   ├── api/
+│   │   └── report.js
+│   └── index.js
+├── package.json
+└── vercel.json
