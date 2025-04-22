@@ -40,12 +40,13 @@ export default function Home() {
 
     // Kirim juga ke Google Spreadsheet
     await fetch('https://script.google.com/macros/s/AKfycbzuyslGExnl3IpcDctJzktsPeVs5m8ixCLNxaaZ2EnQm7BmxT_c9VgfjGj0RwlRncRK/exec', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(submittedData)
-    });
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify(submittedData)
+});
+
 
 
     // Kirim ke webhook Discord
