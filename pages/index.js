@@ -39,7 +39,7 @@ export default function Home() {
     };
 
     // Kirim juga ke Google Spreadsheet
-    await fetch('https://docs.google.com/spreadsheets/d/105dLzjjhpm96MAjq6cXNZxHv5claFrn8svgnLblk9Zs/edit?gid=1431419313#gid=1431419313', {
+    await fetch('https://script.google.com/macros/s/AKfycbzuyslGExnl3IpcDctJzktsPeVs5m8ixCLNxaaZ2EnQm7BmxT_c9VgfjGj0RwlRncRK/exec', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
