@@ -38,6 +38,16 @@ export default function Home() {
       remainingSayurKol: 5000 - form.sayurKol
     };
 
+    // Kirim juga ke Google Spreadsheet
+    await fetch('https://docs.google.com/spreadsheets/d/105dLzjjhpm96MAjq6cXNZxHv5claFrn8svgnLblk9Zs/edit?gid=1431419313#gid=1431419313', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(submittedData)
+    });
+
+
     // Kirim ke webhook Discord
     await fetch('https://discord.com/api/webhooks/1363867371277648203/40njB0VoK7EslN6mvSFomiU9YDLV_X6OcZtECvlYtkN2eKs4mfdiQD5yJoG_Z76C1gGI', {
       method: 'POST',
