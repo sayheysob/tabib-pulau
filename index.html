@@ -55,18 +55,52 @@
         headers: { 'Content-Type': 'application/json' }
       });
 
-      // Kirim ke Discord
-      const content = `**Form Pengambilan Stok**\n` +
-        `Pemohon: ${data.pemohon}\n` +
-        `Penanggung Jawab: ${data.penanggung_jawab}\n` +
-        `Pegagan: ${data.pegagan}, Perban: ${data.perban}, Painkiller: ${data.painkiller}\n` +
-        `Betadine: ${data.betadine}, Zat Besi: ${data.zat_besi}, Sayur Kol: ${data.sayur_kol}`;
+      // Kirim ke Discord dengan embed mewah
+const waktu = new Date().toLocaleString("id-ID", {
+  weekday: "long", year: "numeric", month: "long", day: "numeric",
+  hour: "2-digit", minute: "2-digit"
+});
 
-      await fetch(webhookUrl, {
-        method: 'POST',
-        body: JSON.stringify({ content }),
-        headers: { 'Content-Type': 'application/json' }
-      });
+const embedPayload = {
+  embeds: [{
+    title: "📦 Pengambilan Stok Baru",
+    color: 0x5865F2,
+    fields: [
+      { name: "Tanggal", value: waktu.split("pukul")[0].trim(), inline: true },
+      { name: "Pukul", value: waktu.split("pukul")[1]?.trim() || "-", inline: true },
+      { name: "👤 Pemohon", value: data.pemohon, inline: false },
+      { name: "🧑‍⚕️ Penanggung Jawab", value: data.penanggung_jawab, inline: false },
+      { name: "📋 Barang Diambil", value: 
+        `• Pegagan: ${data.pegagan} unit\n` +
+        `• Perban: ${data.perban} unit\n` +
+        `• Painkiller: ${data.painkiller} unit\n` +
+        `• Betadine: ${data.betadine} unit\n` +
+        `• Zat Besi: ${data.zat_besi} unit\n` +
+        `• Sayur Kol: ${data.sayur_kol} unit`, inline: false 
+      },
+      {
+        name: "📦 Sisa Stok",
+        value:
+          `• Pegagan: ${5000 - data.pegagan} unit\n` +
+          `• Perban: ${5000 - data.perban} unit\n` +
+          `• Painkiller: ${5000 - data.painkiller} unit\n` +
+          `• Betadine: ${5000 - data.betadine} unit\n` +
+          `• Zat Besi: ${5000 - data.zat_besi} unit\n` +
+          `• Sayur Kol: ${5000 - data.sayur_kol} unit`,
+        inline: false
+      }
+    ],
+    footer: {
+      text: "Medical Supplies • " + waktu.split("pukul")[1]?.trim()
+    }
+  }]
+};
+
+// Kirim ke Webhook Discord
+await fetch(webhookUrl, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(embedPayload)
 
       alert("Pengambilan stok berhasil dikirim!");
       form.reset();
