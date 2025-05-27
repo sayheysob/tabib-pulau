@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Form Pengambilan Stok</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex items-center justify-center">
+  <form id="stokForm" class="bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-md">
+    <h2 class="text-2xl font-bold mb-4">Form Pengambilan Stok</h2>
+
+    <label class="block mb-2">Pemohon</label>
+    <input type="text" name="pemohon" required class="w-full p-2 mb-4 rounded bg-gray-700">
+
+    <label class="block mb-2">Penanggung Jawab</label>
+    <input type="text" name="penanggung_jawab" required class="w-full p-2 mb-4 rounded bg-gray-700">
+
+    <label class="block mb-2">Pegagan (unit)</label>
+    <input type="number" name="pegagan" value="0" class="w-full p-2 mb-4 rounded bg-gray-700">
+
+    <label class="block mb-2">Perban (unit)</label>
+    <input type="number" name="perban" value="0" class="w-full p-2 mb-4 rounded bg-gray-700">
+
+    <label class="block mb-2">Painkiller (unit)</label>
+    <input type="number" name="painkiller" value="0" class="w-full p-2 mb-4 rounded bg-gray-700">
+
+    <label class="block mb-2">Betadine (unit)</label>
+    <input type="number" name="betadine" value="0" class="w-full p-2 mb-4 rounded bg-gray-700">
+
+    <label class="block mb-2">Zat Besi (unit)</label>
+    <input type="number" name="zat_besi" value="0" class="w-full p-2 mb-4 rounded bg-gray-700">
+
+    <label class="block mb-2">Sayur Kol (unit)</label>
+    <input type="number" name="sayur_kol" value="0" class="w-full p-2 mb-4 rounded bg-gray-700">
+
+    <button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white p-2 rounded">
+      Kirim Pengambilan Stok
+    </button>
+  </form>
+
+  <script>
+    const form = document.getElementById('stokForm');
+    const webhookUrl = "https://discord.com/api/webhooks/WEBHOOK_ID/WEBHOOK_TOKEN"; // Ganti ini
+    const sheetUrl = "https://script.google.com/macros/s/AKfycbxxxxx/exec"; // Ganti ini
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(form).entries());
+
+      // Kirim ke Google Spreadsheet
+      fetch(sheetUrl, {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: { 'Content-Type': 'application/json' }
+      });
+
+      // Kirim ke Discord
+      const content = `**Form Pengambilan Stok**\n` +
+        `Pemohon: ${data.pemohon}\n` +
+        `Penanggung Jawab: ${data.penanggung_jawab}\n` +
+        `Pegagan: ${data.pegagan}, Perban: ${data.perban}, Painkiller: ${data.painkiller}\n` +
+        `Betadine: ${data.betadine}, Zat Besi: ${data.zat_besi}, Sayur Kol: ${data.sayur_kol}`;
+
+      await fetch(webhookUrl, {
+        method: 'POST',
+        body: JSON.stringify({ content }),
+        headers: { 'Content-Type': 'application/json' }
+      });
+
+      alert("Pengambilan stok berhasil dikirim!");
+      form.reset();
+    });
+  </script>
+</body>
+</html>
