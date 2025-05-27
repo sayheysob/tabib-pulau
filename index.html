@@ -40,73 +40,66 @@
   </form>
 
   <script>
-  const form = document.getElementById('stokForm');
-  const webhookUrl = "https://discord.com/api/webhooks/1364665385374191707/nBSRNthx10Qs9qDjoTn3DMObVqueld7ywxLBnz4DdopPiozCLzRcgjpu9eLH8K_yMvFV"; // Ganti sesuai punyamu
-  const sheetUrl = "https://script.google.com/macros/s/AKfycbxxx/exec"; // Ganti sesuai punyamu
+    const form = document.getElementById('stokForm');
+    const webhookUrl = "https://discord.com/api/webhooks/1364665385374191707/nBSRNthx10Qs9qDjoTn3DMObVqueld7ywxLBnz4DdopPiozCLzRcgjpu9eLH8K_yMvFV";
+    const sheetUrl = "https://script.google.com/macros/s/AKfycbzqNj7zPNMAOEaLyN7iTVwjEoMcfEXxen2zkx8SNi9RyqvY9xw1TQ-1OQoTno0ENh8T7/exec";
 
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const data = Object.fromEntries(new FormData(form).entries());
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(form).entries());
 
-    // Kirim ke Google Spreadsheet
-    fetch(sheetUrl, {
-      method: 'POST',
-      body: JSON.stringify(data),
-      headers: { 'Content-Type': 'application/json' }
-    });
+      // Kirim ke Spreadsheet
+      await fetch(sheetUrl, {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: { 'Content-Type': 'application/json' }
+      });
 
-    // Format waktu
-    const waktu = new Date().toLocaleString("id-ID", {
-      weekday: "long", year: "numeric", month: "long", day: "numeric",
-      hour: "2-digit", minute: "2-digit"
-    });
+      // Kirim ke Discord (notifikasi awal)
+      const waktu = new Date().toLocaleString("id-ID", {
+        weekday: "long", year: "numeric", month: "long", day: "numeric",
+        hour: "2-digit", minute: "2-digit"
+      });
 
-    // Payload ke Discord dalam bentuk embed
-    const embedPayload = {
-      embeds: [{
-        title: "📦 Pengambilan Stok Baru",
-        color: 0x5865F2,
-        fields: [
-          { name: "Tanggal", value: waktu.split("pukul")[0].trim(), inline: true },
-          { name: "Pukul", value: waktu.split("pukul")[1]?.trim() || "-", inline: true },
-          { name: "👤 Pemohon", value: data.pemohon, inline: false },
-          { name: "🧑‍⚕️ Penanggung Jawab", value: data.penanggung_jawab, inline: false },
-          { name: "📋 Barang Diambil", value: 
-            `• Pegagan: ${data.pegagan} unit\n` +
-            `• Perban: ${data.perban} unit\n` +
-            `• Painkiller: ${data.painkiller} unit\n` +
-            `• Betadine: ${data.betadine} unit\n` +
-            `• Zat Besi: ${data.zat_besi} unit\n` +
-            `• Sayur Kol: ${data.sayur_kol} unit`, inline: false 
-          },
-          {
-            name: "📦 Sisa Stok",
-            value:
-              `• Pegagan: ${5000 - data.pegagan} unit\n` +
-              `• Perban: ${5000 - data.perban} unit\n` +
-              `• Painkiller: ${5000 - data.painkiller} unit\n` +
-              `• Betadine: ${5000 - data.betadine} unit\n` +
-              `• Zat Besi: ${5000 - data.zat_besi} unit\n` +
-              `• Sayur Kol: ${5000 - data.sayur_kol} unit`,
-            inline: false
+      const embedPayload = {
+        embeds: [{
+          title: "📦 Pengambilan Stok Baru",
+          color: 0x5865F2,
+          fields: [
+            { name: "Tanggal", value: waktu.split("pukul")[0].trim(), inline: true },
+            { name: "Pukul", value: waktu.split("pukul")[1]?.trim() || "-", inline: true },
+            { name: "👤 Pemohon", value: data.pemohon },
+            { name: "🧑‍⚕️ Penanggung Jawab", value: data.penanggung_jawab },
+            {
+              name: "📋 Barang Diambil",
+              value:
+                `• Pegagan: ${data.pegagan} unit\n` +
+                `• Perban: ${data.perban} unit\n` +
+                `• Painkiller: ${data.painkiller} unit\n` +
+                `• Betadine: ${data.betadine} unit\n` +
+                `• Zat Besi: ${data.zat_besi} unit\n` +
+                `• Sayur Kol: ${data.sayur_kol} unit`
+            },
+            {
+              name: "📦 Status",
+              value: "⏳ Menunggu ACC Penanggung Jawab"
+            }
+          ],
+          footer: {
+            text: "Tabib Pulau Cayo • " + waktu.split("pukul")[1]?.trim()
           }
-        ],
-        footer: {
-          text: "Tabib Pulau Cayo • " + waktu.split("pukul")[1]?.trim()
-        }
-      }]
-    };
+        }]
+      };
 
-    // Kirim ke Discord
-    await fetch(webhookUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(embedPayload)
+      await fetch(webhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(embedPayload)
+      });
+
+      alert("Pengambilan stok berhasil dikirim!");
+      form.reset();
     });
-
-    alert("Pengambilan stok berhasil dikirim!");
-    form.reset();
-  });
-</script>
+  </script>
 </body>
 </html>
