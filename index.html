@@ -44,21 +44,24 @@
     const sheetUrl = "https://script.google.com/macros/s/AKfycbwNIpggOEaRcWa2krjV6VQ9nJaOt2IYc72I6TC0BP2PeZmjDchHiDvTu5spszfHZ100wA/exec";
 
     form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const data = Object.fromEntries(new FormData(form).entries());
+  e.preventDefault();
+  const data = Object.fromEntries(new FormData(form).entries());
 
-      try {
-        await fetch(sheetUrl, {
-          method: 'POST',
-          body: JSON.stringify(data),
-          headers: { 'Content-Type': 'application/json' }
-        });
-        alert("✅ Pengambilan stok berhasil dikirim!");
-        form.reset();
-      } catch (err) {
-        alert("❌ Gagal mengirim data. Cek koneksi atau URL.");
-      }
+  try {
+    const response = await fetch(sheetUrl, {
+      method: 'POST',
+      body: JSON.stringify(data),
+      headers: { 'Content-Type': 'application/json' }
     });
+
+    const result = await response.text();
+    alert("✅ Sukses: " + result);
+    form.reset();
+
+  } catch (err) {
+    alert("❌ Gagal mengirim data: " + err.message);
+  }
+});
   </script>
 </body>
 </html>
