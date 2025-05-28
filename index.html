@@ -49,14 +49,18 @@
 
   try {
     const response = await fetch(sheetUrl, {
-      method: 'POST',
-      body: JSON.stringify(data),
-      headers: { 'Content-Type': 'application/json' }
-    });
+  method: 'POST',
+  body: JSON.stringify(data),
+  headers: { 'Content-Type': 'application/json' }
+});
 
-    const result = await response.text();
-    alert("✅ Sukses: " + result);
-    form.reset();
+const resultText = await response.text();
+
+if (!response.ok) {
+  throw new Error(`Status ${response.status}: ${resultText}`);
+}
+
+alert("✅ Sukses: " + resultText);
 
   } catch (err) {
     alert("❌ Gagal mengirim data: " + err.message);
