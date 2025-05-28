@@ -1,96 +1,109 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
   <title>Form Pengambilan Stok</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {background: #23272a; color: #fff; font-family: 'Segoe UI', Arial, sans-serif;}
+    form {background: #2f3136; padding: 24px; border-radius: 8px; max-width: 420px; margin: 40px auto;}
+    label {display:block; margin: 10px 0 5px;}
+    input, select, textarea {width:100%; padding:8px; border-radius:5px; border:none; background:#40444b; color:#fff;}
+    button {background:#5865f2; color:#fff; border:none; padding:10px 0; border-radius:5px; font-weight:bold; width:100%; margin-top:20px;}
+    h2 {text-align:center;}
+  </style>
 </head>
-<body class="bg-gray-900 text-white min-h-screen flex items-center justify-center">
-  <form id="stokForm" class="bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-md">
-    <h2 class="text-2xl font-bold mb-4">Form Pengambilan Stok</h2>
-
-    <label class="block mb-2">Nama Pemohon</label>
-    <select name="pemohon" id="pemohon" required class="w-full p-2 mb-4 rounded bg-gray-700 text-white"></select>
-
-    <label class="block mb-2">Penanggung Jawab</label>
-    <select name="penanggung_jawab" id="penanggung_jawab" required class="w-full p-2 mb-4 rounded bg-gray-700 text-white"></select>
-
-    <label class="block mb-2">Pegagan (unit)</label>
-    <input type="number" name="pegagan" value="0" class="w-full p-2 mb-4 rounded bg-gray-700">
-
-    <label class="block mb-2">Perban (unit)</label>
-    <input type="number" name="perban" value="0" class="w-full p-2 mb-4 rounded bg-gray-700">
-
-    <label class="block mb-2">Painkiller (unit)</label>
-    <input type="number" name="painkiller" value="0" class="w-full p-2 mb-4 rounded bg-gray-700">
-
-    <label class="block mb-2">Betadine (unit)</label>
-    <input type="number" name="betadine" value="0" class="w-full p-2 mb-4 rounded bg-gray-700">
-
-    <label class="block mb-2">Zat Besi (unit)</label>
-    <input type="number" name="zat_besi" value="0" class="w-full p-2 mb-4 rounded bg-gray-700">
-
-    <label class="block mb-2">Sayur Kol (unit)</label>
-    <input type="number" name="sayur_kol" value="0" class="w-full p-2 mb-4 rounded bg-gray-700">
-
-    <label class="block mb-2">Keterangan</label>
-    <select name="keterangan" id="keterangan" required class="w-full p-2 mb-4 rounded bg-gray-700 text-white"></select>
-
-    <button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white p-2 rounded">
-      Kirim Pengambilan Stok
-    </button>
+<body>
+  <form id="stockForm">
+    <h2>Pengambilan Stok Baru</h2>
+    <label for="pemohon">Pemohon</label>
+    <input type="text" id="pemohon" required>
+    <label for="penanggungJawab">Penanggung Jawab</label>
+    <input type="text" id="penanggungJawab" required>
+    <label for="pegagan">Pegagan (unit)</label>
+    <input type="number" id="pegagan" min="0" value="0">
+    <label for="perban">Perban (unit)</label>
+    <input type="number" id="perban" min="0" value="0">
+    <label for="painkiller">Painkiller (unit)</label>
+    <input type="number" id="painkiller" min="0" value="0">
+    <label for="betadine">Betadine (unit)</label>
+    <input type="number" id="betadine" min="0" value="0">
+    <label for="zatbesi">Zat Besi (unit)</label>
+    <input type="number" id="zatbesi" min="0" value="0">
+    <label for="sayurkol">Sayur Kol (unit)</label>
+    <input type="number" id="sayurkol" min="0" value="0">
+    <label for="keterangan">Keterangan</label>
+    <textarea id="keterangan" rows="2"></textarea>
+    <button type="submit">Kirim ke Discord</button>
   </form>
-
   <script>
-    const form = document.getElementById('stokForm');
-    const sheetUrl = "https://script.google.com/macros/s/AKfycbxYaSXCzgvmY-ISNSrI4lLgGG04oAotMzlnAwP4wwt8huF_LPztroTj_vnDGk1NT-uM/exec";
-
-    async function loadDropdowns() {
-      try {
-        const response = await fetch(sheetUrl);
-        const data = await response.json();
-
-        const setOptions = (selectId, options) => {
-          const select = document.getElementById(selectId);
-          options.forEach(opt => {
-            const o = document.createElement("option");
-            o.value = o.textContent = opt;
-            select.appendChild(o);
-          });
-        };
-
-        setOptions("pemohon", data.pemohon);
-        setOptions("penanggung_jawab", data.penanggung_jawab);
-        setOptions("keterangan", data.keterangan);
-
-      } catch (err) {
-        alert("❌ Gagal mengambil data anggota.");
-        console.error(err);
-      }
-    }
-
-    form.addEventListener('submit', async (e) => {
+    document.getElementById('stockForm').onsubmit = async function(e) {
       e.preventDefault();
-      const data = Object.fromEntries(new FormData(form).entries());
+      const pemohon = document.getElementById('pemohon').value;
+      const penanggungJawab = document.getElementById('penanggungJawab').value;
+      const pegagan = document.getElementById('pegagan').value;
+      const perban = document.getElementById('perban').value;
+      const painkiller = document.getElementById('painkiller').value;
+      const betadine = document.getElementById('betadine').value;
+      const zatbesi = document.getElementById('zatbesi').value;
+      const sayurkol = document.getElementById('sayurkol').value;
+      const keterangan = document.getElementById('keterangan').value;
+
+      // Ambil waktu sekarang (WIB)
+      const waktuSekarang = new Date();
+      const waktuUTC = new Date(waktuSekarang.getTime() + (waktuSekarang.getTimezoneOffset() * 60000));
+      const waktuWIB = new Date(waktuUTC.getTime() + (7 * 60 * 60 * 1000)); // UTC+7
+
+      const hariID = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
+      const bulanID = [
+        "Januari","Februari","Maret","April","Mei","Juni",
+        "Juli","Agustus","September","Oktober","November","Desember"
+      ];
+      const tanggalFormatted = `${hariID[waktuWIB.getDay()]}, ${waktuWIB.getDate()} ${bulanID[waktuWIB.getMonth()]} ${waktuWIB.getFullYear()}`;
+      const jamFormatted = waktuWIB.toTimeString().slice(0,5);
+
+      const webhookUrl = "https://discord.com/api/webhooks/1364665385374191707/nBSRNthx10Qs9qDjoTn3DMObVqueld7ywxLBnz4DdopPiozCLzRcgjpu9eLH8K_yMvFV";
+      const data = {
+        "embeds": [
+          {
+            "color": 5793266,
+            "title": "📦 Pengambilan Stok Baru",
+            "fields": [
+              { "name": "Tanggal", "value": tanggalFormatted, "inline": false },
+              { "name": "Pukul", "value": jamFormatted, "inline": false },
+              { "name": "👤 Pemohon", "value": pemohon, "inline": false },
+              { "name": "🧑‍💼 Penanggung Jawab", "value": penanggungJawab, "inline": false },
+              { "name": "📋 Barang Diambil", "value": 
+                  `• Pegagan: ${pegagan} unit\n`+
+                  `• Perban: ${perban} unit\n`+
+                  `• Painkiller: ${painkiller} unit\n`+
+                  `• Betadine: ${betadine} unit\n`+
+                  `• Zat Besi: ${zatbesi} unit\n`+
+                  `• Sayur Kol: ${sayurkol} unit`, "inline": false 
+              },
+              { "name": "Keterangan", "value": keterangan ? keterangan : "-", "inline": false }
+            ],
+            "footer": { "text": `Tabib Pulau Cayo • ${jamFormatted}` }
+          }
+        ]
+      };
 
       try {
-        const response = await fetch(sheetUrl, {
-          method: 'POST',
-          body: JSON.stringify(data),
-          headers: { 'Content-Type': 'application/json' }
+        const res = await fetch(webhookUrl, {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify(data)
         });
-
-        const result = await response.text();
-        if (!response.ok) throw new Error(result);
-        alert("✅ Sukses: " + result);
-        form.reset();
+        if (res.ok) {
+          alert("Berhasil dikirim ke Discord!");
+          document.getElementById('stockForm').reset();
+        } else {
+          alert("Gagal mengirim ke Discord. Pastikan webhook benar.");
+        }
       } catch (err) {
-        alert("❌ Gagal mengirim data: " + err.message);
+        alert("Error mengirim ke Discord.");
       }
-    });
-
-    loadDropdowns();
+    };
   </script>
 </body>
 </html>
