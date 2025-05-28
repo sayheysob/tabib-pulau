@@ -41,64 +41,23 @@
 
   <script>
     const form = document.getElementById('stokForm');
-    const webhookUrl = "https://discord.com/api/webhooks/1364665385374191707/nBSRNthx10Qs9qDjoTn3DMObVqueld7ywxLBnz4DdopPiozCLzRcgjpu9eLH8K_yMvFV";
     const sheetUrl = "https://script.google.com/macros/s/AKfycbzl71kcbA2SuWVt5QMWZ7lIZ9TOKjbhDkIw86mufIgDntEkfcU82iAVwIO506g7kJM9/exec";
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const data = Object.fromEntries(new FormData(form).entries());
 
-      // Kirim ke Spreadsheet
-      await fetch(sheetUrl, {
-        method: 'POST',
-        body: JSON.stringify(data),
-        headers: { 'Content-Type': 'application/json' }
-      });
-
-      // Kirim ke Discord (notifikasi awal)
-      const waktu = new Date().toLocaleString("id-ID", {
-        weekday: "long", year: "numeric", month: "long", day: "numeric",
-        hour: "2-digit", minute: "2-digit"
-      });
-
-      const embedPayload = {
-        embeds: [{
-          title: "📦 Pengambilan Stok Baru",
-          color: 0x5865F2,
-          fields: [
-            { name: "Tanggal", value: waktu.split("pukul")[0].trim(), inline: true },
-            { name: "Pukul", value: waktu.split("pukul")[1]?.trim() || "-", inline: true },
-            { name: "👤 Pemohon", value: data.pemohon },
-            { name: "🧑‍⚕️ Penanggung Jawab", value: data.penanggung_jawab },
-            {
-              name: "📋 Barang Diambil",
-              value:
-                `• Pegagan: ${data.pegagan} unit\n` +
-                `• Perban: ${data.perban} unit\n` +
-                `• Painkiller: ${data.painkiller} unit\n` +
-                `• Betadine: ${data.betadine} unit\n` +
-                `• Zat Besi: ${data.zat_besi} unit\n` +
-                `• Sayur Kol: ${data.sayur_kol} unit`
-            },
-            {
-              name: "📦 Status",
-              value: "⏳ Menunggu ACC Penanggung Jawab"
-            }
-          ],
-          footer: {
-            text: "Tabib Pulau Cayo • " + waktu.split("pukul")[1]?.trim()
-          }
-        }]
-      };
-
-      await fetch(webhookUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(embedPayload)
-      });
-
-      alert("Pengambilan stok berhasil dikirim!");
-      form.reset();
+      try {
+        await fetch(sheetUrl, {
+          method: 'POST',
+          body: JSON.stringify(data),
+          headers: { 'Content-Type': 'application/json' }
+        });
+        alert("✅ Pengambilan stok berhasil dikirim!");
+        form.reset();
+      } catch (err) {
+        alert("❌ Gagal mengirim data. Cek koneksi atau URL.");
+      }
     });
   </script>
 </body>
