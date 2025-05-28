@@ -10,11 +10,11 @@
   <form id="stokForm" class="bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-md">
     <h2 class="text-2xl font-bold mb-4">Form Pengambilan Stok</h2>
 
-    <label class="block mb-2">Pemohon</label>
-    <input type="text" name="pemohon" required class="w-full p-2 mb-4 rounded bg-gray-700">
+    <label class="block mb-2">Nama Pemohon</label>
+    <select name="pemohon" id="pemohon" required class="w-full p-2 mb-4 rounded bg-gray-700 text-white"></select>
 
     <label class="block mb-2">Penanggung Jawab</label>
-    <input type="text" name="penanggung_jawab" required class="w-full p-2 mb-4 rounded bg-gray-700">
+    <select name="penanggung_jawab" id="penanggung_jawab" required class="w-full p-2 mb-4 rounded bg-gray-700 text-white"></select>
 
     <label class="block mb-2">Pegagan (unit)</label>
     <input type="number" name="pegagan" value="0" class="w-full p-2 mb-4 rounded bg-gray-700">
@@ -34,6 +34,9 @@
     <label class="block mb-2">Sayur Kol (unit)</label>
     <input type="number" name="sayur_kol" value="0" class="w-full p-2 mb-4 rounded bg-gray-700">
 
+    <label class="block mb-2">Keterangan</label>
+    <select name="keterangan" id="keterangan" required class="w-full p-2 mb-4 rounded bg-gray-700 text-white"></select>
+
     <button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white p-2 rounded">
       Kirim Pengambilan Stok
     </button>
@@ -43,29 +46,51 @@
     const form = document.getElementById('stokForm');
     const sheetUrl = "https://script.google.com/macros/s/AKfycbwNIpggOEaRcWa2krjV6VQ9nJaOt2IYc72I6TC0BP2PeZmjDchHiDvTu5spszfHZ100wA/exec";
 
+    async function loadDropdowns() {
+      try {
+        const response = await fetch(sheetUrl);
+        const data = await response.json();
+
+        const setOptions = (selectId, options) => {
+          const select = document.getElementById(selectId);
+          options.forEach(opt => {
+            const o = document.createElement("option");
+            o.value = o.textContent = opt;
+            select.appendChild(o);
+          });
+        };
+
+        setOptions("pemohon", data.pemohon);
+        setOptions("penanggung_jawab", data.penanggung_jawab);
+        setOptions("keterangan", data.keterangan);
+
+      } catch (err) {
+        alert("❌ Gagal mengambil data anggota.");
+        console.error(err);
+      }
+    }
+
     form.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const data = Object.fromEntries(new FormData(form).entries());
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(form).entries());
 
-  try {
-    const response = await fetch(sheetUrl, {
-  method: 'POST',
-  body: JSON.stringify(data),
-  headers: { 'Content-Type': 'application/json' }
-});
+      try {
+        const response = await fetch(sheetUrl, {
+          method: 'POST',
+          body: JSON.stringify(data),
+          headers: { 'Content-Type': 'application/json' }
+        });
 
-const resultText = await response.text();
+        const result = await response.text();
+        if (!response.ok) throw new Error(result);
+        alert("✅ Sukses: " + result);
+        form.reset();
+      } catch (err) {
+        alert("❌ Gagal mengirim data: " + err.message);
+      }
+    });
 
-if (!response.ok) {
-  throw new Error(`Status ${response.status}: ${resultText}`);
-}
-
-alert("✅ Sukses: " + resultText);
-
-  } catch (err) {
-    alert("❌ Gagal mengirim data: " + err.message);
-  }
-});
+    loadDropdowns();
   </script>
 </body>
 </html>
