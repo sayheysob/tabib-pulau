@@ -219,9 +219,6 @@
     </div>
   </div>
   <script>
-const anggotaEndpoint = "https://v1.nocodeapi.com/sayheysob/google_sheets/iRofLAbBmXmbbbQy?tabId=Anggota%20Tabib";
-const tokenEndpoint = "https://v1.nocodeapi.com/sayheysob/google_sheets/pExEanXyYErzsCpl?tabId=token";
-
 const prices = {
   pegagan: 2500,
   perban: 4000,
@@ -250,64 +247,36 @@ document.querySelectorAll("input[type='number']").forEach(input => {
 });
 
 // --- FUNGSI DROPDOWN (Anggota Tabib) ---
-async function populateDropdowns() {
-  try {
-    const res = await fetch(anggotaEndpoint);
-    const result = await res.json();
-    const data = result.data;
-
-    const namaOptions = [...new Set(data.map(row => row["ANGGOTA TABIB"]).filter(Boolean))];
-    const penanggungOptions = [...new Set(data.map(row => row["PENGURUS"]).filter(Boolean))];
-    const keteranganOptions = [...new Set(data.map(row => row["KETERANGAN"]).filter(Boolean))];
-
-    const fillSelect = (id, options) => {
-      const select = document.getElementById(id);
-      select.innerHTML = "";
-      const placeholder = document.createElement("option");
-      placeholder.value = "";
-      placeholder.textContent = "Pilih...";
-      placeholder.disabled = true;
-      placeholder.selected = true;
-      select.appendChild(placeholder);
-      options.forEach(value => {
-        const option = document.createElement("option");
-        option.value = value;
-        option.textContent = value;
-        select.appendChild(option);
-      });
-    };
-
-    fillSelect("nama", namaOptions);
-    fillSelect("penanggung", penanggungOptions);
-    fillSelect("keterangan", keteranganOptions);
-  } catch (error) {
-    console.error("Gagal mengambil data anggota:", error);
-  }
-}
-populateDropdowns();
-
-// --- FUNGSI VALIDASI TOKEN ---
-async function isTokenValid(token) {
-  const res = await fetch(tokenEndpoint);
-  const result = await res.json();
-  const data = result.data;
-  if (!data || !data[0]) return false;
-  // Baca dan bandingkan token dalam bentuk string, hapus spasi
-  const tokenSheet = String(data[0].TOKEN).trim();
-  console.log("Sheet token:", tokenSheet, "| User input:", token);
-  return String(token).trim() === tokenSheet;
-}
-
-// --- SUBMIT FORM ---
-const submitBtn = document.querySelector('button[type="submit"]');
-document.getElementById("stockForm").addEventListener("submit", async function(event) {
-  event.preventDefault();
-
-  submitBtn.disabled = true;
-  submitBtn.innerHTML = `<span class="material-symbols-rounded" style="vertical-align:middle;font-size:1.2em;">hourglass_top</span> Sabar bos, loading...`;
-
-  const tokenVal = document.getElementById("token").value.trim();
-
+// Fetch data untuk isi dropdown & token
+fetch('https://script.google.com/macros/s/AKfycbxu09evFMMAA0qQ-jYBT_iHiEg5rUIutiSpfRgmEZJjY56kkNpHf6QH_ptfDWbeaTpuQg/exec')
+  .then(res => res.json())
+  .then(data => {
+    // Isi dropdown Nama
+    let namaSelect = document.getElementById("nama");
+    data.nama.forEach(nama => {
+      let option = document.createElement("option");
+      option.value = nama;
+      option.textContent = nama;
+      namaSelect.appendChild(option);
+    });
+    // Isi dropdown Penanggung Jawab
+    let penanggungSelect = document.getElementById("penanggung");
+    data.penanggung.forEach(pj => {
+      let option = document.createElement("option");
+      option.value = pj;
+      option.textContent = pj;
+      penanggungSelect.appendChild(option);
+    });
+    // Isi dropdown Keterangan
+    let ketSelect = document.getElementById("keterangan");
+    data.keterangan.forEach(ket => {
+      let option = document.createElement("option");
+      option.value = ket;
+      option.textContent = ket;
+      ketSelect.appendChild(option);
+    });
+    // Token dan tanggal token bisa kamu pakai sesuai kebutuhan (misal info/validasi)
+    // console.log(data.token, data.tanggal_token);
   // --- CEK TOKEN ---
 if (!await isTokenValid(tokenVal)) {
   document.getElementById("modalIcon").textContent = "❌";
