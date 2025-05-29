@@ -360,6 +360,23 @@ if (!await isTokenValid(tokenVal)) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data)
   });
+  
+  // KIRIM DATA KE GOOGLE SHEETS VIA APPS SCRIPT
+await fetch("https://script.google.com/macros/s/AKfycbxu09evFMMAA0qQ-jYBT_iHiEg5rUIutiSpfRgmEZJjY56kkNpHf6QH_ptfDWbeaTpuQg/exec", {
+  method: "POST",
+  body: JSON.stringify({
+    nama: getText("nama"),
+    penanggung: getText("penanggung"),
+    pegagan: getVal("pegagan"),
+    perban: getVal("perban"),
+    painkiller: getVal("painkiller"),
+    betadine: getVal("betadine"),
+    zatbesi: getVal("zatbesi"),
+    sayurkol: getVal("sayurkol"),
+    keterangan: getText("keterangan")
+  }),
+  headers: { "Content-Type": "application/json" }
+});
 
   document.getElementById("modalIcon").textContent = "✔";
   document.getElementById("modalIcon").style.color = "#1877ff";
