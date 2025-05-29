@@ -362,7 +362,7 @@ if (!await isTokenValid(tokenVal)) {
   });
   
   // KIRIM DATA KE GOOGLE SHEETS VIA APPS SCRIPT
-await fetch("https://script.google.com/macros/s/AKfycbxu09evFMMAA0qQ-jYBT_iHiEg5rUIutiSpfRgmEZJjY56kkNpHf6QH_ptfDWbeaTpuQg/exec", {
+await fetch("https://tabib-pulau.vercel.app/api/sheet", {
   method: "POST",
   body: JSON.stringify({
     nama: getText("nama"),
