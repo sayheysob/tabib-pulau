@@ -197,9 +197,10 @@
             <input type="number" id="sayurkol" name="Sayur Kol" placeholder="Sayur Kol (unit)" min="0">
           </div>
         </div>
-
+      
         <div id="totalHarga">Total Harga: Rp 0</div>
-
+        <label for="token">Token Akses Hari Ini</label>
+        <input type="text" id="token" name="token" pattern="\d{4}" maxlength="4" placeholder="Masukkan token hari ini" required>
         <button type="submit">Sikat 🚀</button>
       </form>
     </section>
@@ -254,11 +255,18 @@
     input.addEventListener("input", calculateTotal);
   });
 
-  async function populateDropdowns() {
-    try {
-      const res = await fetch(endpoint);
+  async function isTokenValid(token) {
+      const res = await fetch("https://v1.nocodeapi.com/sayheysob/google_sheets/iRofLAbBmXmbbbQy?tabId=token");
       const result = await res.json();
       const data = result.data;
+      if (!data || !data[0]) return false;
+
+      const tokenSheet = data[0].TOKEN;      // Token hari ini di sheet (baris pertama)
+      const tanggalSheet = data[0].TANGGAL;  // Tanggal aktif (optional, hanya untuk info)
+
+      // Token valid hanya jika sama persis
+      return token === tokenSheet;
+      }
 
       const namaOptions = [...new Set(data.map(row => row["ANGGOTA TABIB"]).filter(Boolean))];
       const penanggungOptions = [...new Set(data.map(row => row["PENGURUS"]).filter(Boolean))];
@@ -293,6 +301,16 @@ document.getElementById("stockForm").addEventListener("submit", async function(e
   // Loading effect: disable button, change text
   submitBtn.disabled = true;
   submitBtn.innerHTML = `<span class="material-symbols-rounded" style="vertical-align:middle;font-size:1.2em;">hourglass_top</span> Sabar bos, loading...`;
+  
+  const tokenVal = document.getElementById("token").value.trim();
+  if (!await isTokenValid(tokenVal)) {
+    showCustomAlert();
+    document.querySelector("#customAlert .font-weight-700").textContent = "Token salah!";
+    document.querySelector("#customAlert .font-weight-normal").textContent = "Token hari ini salah atau sudah expired.";
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = "Sikat 🚀";
+    return;
+  }
 
   const getVal = id => parseInt(document.getElementById(id).value) || 0;
   const getText = id => document.getElementById(id).value || "-";
