@@ -361,8 +361,10 @@ if (!await isTokenValid(tokenVal)) {
     body: JSON.stringify(data)
   });
 
+  document.getElementById("modalIcon").textContent = "✔";
+  document.getElementById("modalIcon").style.color = "#1877ff";
   document.querySelector("#customAlert .font-weight-700").textContent = "Data berhasil direkap!";
-  document.querySelector("#customAlert .font-weight-normal").textContent = "Pengambilan stok kamu sudah masuk sistem.<br>Terima kasih 🙏";
+  document.querySelector("#customAlert .font-weight-normal").innerHTML = "Pengambilan stok kamu sudah masuk sistem. Terima kasih 🙏";
   showCustomAlert();
   document.getElementById("stockForm").reset();
   document.getElementById("totalHarga").textContent = "Total Harga: Rp 0";
