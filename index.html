@@ -212,6 +212,7 @@
   <!-- MODAL ALERT -->
   <div id="customAlert" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(40,48,68,0.15); z-index:9999; align-items:center; justify-content:center;">
     <div style="background:#fff; border-radius:16px; box-shadow:0 8px 32px rgba(44,62,80,0.18); padding:2.1rem 1.5rem 1.4rem 1.5rem; max-width:90vw; min-width:260px; text-align:center; animation:pop .27s;">
+      <span id="modalIcon" style="font-size:2.5rem; display:block; margin-bottom:.5em; color:#1877ff;">&#10004;</span>
       <span style="font-size:2.5rem; display:block; margin-bottom:.5em; color:#1877ff;">&#10004;</span>
       <div class="font-weight-700" style="font-size:1.25rem; font-weight:700; color:#222; margin-bottom:0.2em;">Data berhasil direkap!</div>
       <div class="font-weight-normal" style="font-size:.97rem; color:#667; margin-bottom:.9em;">Pengambilan stok kamu sudah masuk sistem.<br>Terima kasih 🙏</div>
@@ -307,14 +308,16 @@ document.getElementById("stockForm").addEventListener("submit", async function(e
   const tokenVal = document.getElementById("token").value.trim();
 
   // --- CEK TOKEN ---
-  if (!await isTokenValid(tokenVal)) {
-    document.querySelector("#customAlert .font-weight-700").textContent = "Token salah!";
-    document.querySelector("#customAlert .font-weight-normal").textContent = "Coba tanyakan ke pengurus!";
-    showCustomAlert();
-    submitBtn.disabled = false;
-    submitBtn.innerHTML = "Sikat 🚀";
-    return;
-  }
+if (!await isTokenValid(tokenVal)) {
+  document.getElementById("modalIcon").textContent = "❌";
+  document.getElementById("modalIcon").style.color = "#ff4848";
+  document.querySelector("#customAlert .font-weight-700").textContent = "Token salah!";
+  document.querySelector("#customAlert .font-weight-normal").textContent = "Coba tanyakan ke pengurus!";
+  showCustomAlert();
+  submitBtn.disabled = false;
+  submitBtn.innerHTML = "Sikat 🚀";
+  return;
+}
 
   const getVal = id => parseInt(document.getElementById(id).value) || 0;
   const getText = id => document.getElementById(id).value || "-";
