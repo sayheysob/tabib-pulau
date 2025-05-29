@@ -270,54 +270,64 @@
 
   populateDropdowns();
 
-  document.getElementById("stockForm").addEventListener("submit", async function(event) {
-    event.preventDefault();
+  const submitBtn = document.querySelector('button[type="submit"]');
 
-    const getVal = id => parseInt(document.getElementById(id).value) || 0;
-    const getText = id => document.getElementById(id).value || "-";
+document.getElementById("stockForm").addEventListener("submit", async function(event) {
+  event.preventDefault();
 
-    const total = calculateTotal();
-    const now = new Date();
-    const tanggal = now.toLocaleDateString('id-ID');
-    const waktu = now.toLocaleTimeString('id-ID');
+  // Loading effect: disable button, change text
+  submitBtn.disabled = true;
+  submitBtn.innerHTML = `<span class="material-symbols-rounded" style="vertical-align:middle;font-size:1.2em;">hourglass_top</span> Sabar bos, loading...`;
 
-    const data = {
-      embeds: [
-        {
-          title: "📦 Pengambilan Stok Barang",
-          color: 5814783,
-          fields: [
-            { name: "👤 Nama", value: getText("nama"), inline: true },
-            { name: "📋 Penanggung Jawab", value: getText("penanggung"), inline: true },
-            {
-              name: "📦 Barang", value:
-                `Pegagan: ${getVal("pegagan")}\n` +
-                `Perban: ${getVal("perban")}\n` +
-                `Painkiller: ${getVal("painkiller")}\n` +
-                `Betadine: ${getVal("betadine")}\n` +
-                `Zat Besi: ${getVal("zatbesi")}\n` +
-                `Sayur Kol: ${getVal("sayurkol")}`,
-              inline: false
-            },
-            { name: "💰 Total Harga", value: `Rp ${total.toLocaleString("id-ID")}`, inline: false },
-            { name: "🕒 Tanggal & Waktu", value: `${tanggal} - ${waktu}`, inline: false },
-            { name: "📝 Keterangan", value: getText("keterangan"), inline: false }
-          ],
-          footer: { text: "Tabib Pulau - Cayo Perico" }
-        }
-      ]
-    };
+  const getVal = id => parseInt(document.getElementById(id).value) || 0;
+  const getText = id => document.getElementById(id).value || "-";
 
-    await fetch("https://discord.com/api/webhooks/1364665385374191707/nBSRNthx10Qs9qDjoTn3DMObVqueld7ywxLBnz4DdopPiozCLzRcgjpu9eLH8K_yMvFV", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data)
-    });
+  const total = calculateTotal();
+  const now = new Date();
+  const tanggal = now.toLocaleDateString('id-ID');
+  const waktu = now.toLocaleTimeString('id-ID');
 
-    alert("Data berhasil direkap!");
-    document.getElementById("stockForm").reset();
-    document.getElementById("totalHarga").textContent = "Total Harga: Rp 0";
+  const data = {
+    embeds: [
+      {
+        title: "📦 Pengambilan Stok Barang",
+        color: 5814783,
+        fields: [
+          { name: "👤 Nama", value: getText("nama"), inline: true },
+          { name: "📋 Penanggung Jawab", value: getText("penanggung"), inline: true },
+          {
+            name: "📦 Barang", value:
+              `Pegagan: ${getVal("pegagan")}\n` +
+              `Perban: ${getVal("perban")}\n` +
+              `Painkiller: ${getVal("painkiller")}\n` +
+              `Betadine: ${getVal("betadine")}\n` +
+              `Zat Besi: ${getVal("zatbesi")}\n` +
+              `Sayur Kol: ${getVal("sayurkol")}`,
+            inline: false
+          },
+          { name: "💰 Total Harga", value: `Rp ${total.toLocaleString("id-ID")}`, inline: false },
+          { name: "🕒 Tanggal & Waktu", value: `${tanggal} - ${waktu}`, inline: false },
+          { name: "📝 Keterangan", value: getText("keterangan"), inline: false }
+        ],
+        footer: { text: "Tabib Pulau - Cayo Perico" }
+      }
+    ]
+  };
+
+  await fetch("https://discord.com/api/webhooks/1364665385374191707/nBSRNthx10Qs9qDjoTn3DMObVqueld7ywxLBnz4DdopPiozCLzRcgjpu9eLH8K_yMvFV", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
   });
+
+  alert("Data berhasil direkap!");
+  document.getElementById("stockForm").reset();
+  document.getElementById("totalHarga").textContent = "Total Harga: Rp 0";
+
+  // Kembalikan tombol ke keadaan semula
+  submitBtn.disabled = false;
+  submitBtn.innerHTML = "Sikat 🚀";
+});
   </script>
 </body>
 </html>
