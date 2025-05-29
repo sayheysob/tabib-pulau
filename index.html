@@ -247,7 +247,6 @@ document.querySelectorAll("input[type='number']").forEach(input => {
 });
 
 // --- FUNGSI DROPDOWN (Anggota Tabib) ---
-// Fetch data untuk isi dropdown & token
 fetch('https://script.google.com/macros/s/AKfycbxu09evFMMAA0qQ-jYBT_iHiEg5rUIutiSpfRgmEZJjY56kkNpHf6QH_ptfDWbeaTpuQg/exec')
   .then(res => res.json())
   .then(data => {
@@ -275,29 +274,32 @@ fetch('https://script.google.com/macros/s/AKfycbxu09evFMMAA0qQ-jYBT_iHiEg5rUIuti
       option.textContent = ket;
       ketSelect.appendChild(option);
     });
-    // Token dan tanggal token bisa kamu pakai sesuai kebutuhan (misal info/validasi)
-    // console.log(data.token, data.tanggal_token);
-  // --- CEK TOKEN ---
-if (!await isTokenValid(tokenVal)) {
-  document.getElementById("modalIcon").textContent = "❌";
-  document.getElementById("modalIcon").style.color = "#ff4848";
-  document.querySelector("#customAlert .font-weight-700").textContent = "Token salah!";
-  document.querySelector("#customAlert .font-weight-normal").textContent = "Coba tanyakan ke pengurus!";
-  showCustomAlert();
-  submitBtn.disabled = false;
-  submitBtn.innerHTML = "Sikat 🚀";
-  return;
-}
+    // Data token bisa dipakai jika perlu
+    // console.log("Token:", data.token, "Tanggal:", data.tanggal_token);
+  })
+  .catch(err => {
+    alert("Gagal memuat data anggota: " + err);
+  });
 
+
+// --- SUBMIT FORM ---
+const submitBtn = document.querySelector('button[type="submit"]');
+document.getElementById("stockForm").addEventListener("submit", async function(event) {
+  event.preventDefault();
+
+  submitBtn.disabled = true;
+  submitBtn.innerHTML = `<span class="material-symbols-rounded" style="vertical-align:middle;font-size:1.2em;">hourglass_top</span> Sabar bos, loading...`;
+
+  // Ambil value
   const getVal = id => parseInt(document.getElementById(id).value) || 0;
   const getText = id => document.getElementById(id).value || "-";
 
+  // KIRIM KE DISCORD (tetap seperti script kamu)
   const total = calculateTotal();
   const now = new Date();
   const tanggal = now.toLocaleDateString('id-ID');
   const waktu = now.toLocaleTimeString('id-ID');
-
-  const data = {
+  const discordData = {
     embeds: [
       {
         title: "📦 Pengambilan Stok Barang",
@@ -327,25 +329,25 @@ if (!await isTokenValid(tokenVal)) {
   await fetch("https://discord.com/api/webhooks/1364665385374191707/nBSRNthx10Qs9qDjoTn3DMObVqueld7ywxLBnz4DdopPiozCLzRcgjpu9eLH8K_yMvFV", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data)
+    body: JSON.stringify(discordData)
   });
   
   // KIRIM DATA KE GOOGLE SHEETS VIA APPS SCRIPT
-await fetch("https://tabib-pulau.vercel.app/api/sheet", {
-  method: "POST",
-  body: JSON.stringify({
-    nama: getText("nama"),
-    penanggung: getText("penanggung"),
-    pegagan: getVal("pegagan"),
-    perban: getVal("perban"),
-    painkiller: getVal("painkiller"),
-    betadine: getVal("betadine"),
-    zatbesi: getVal("zatbesi"),
-    sayurkol: getVal("sayurkol"),
-    keterangan: getText("keterangan")
-  }),
-  headers: { "Content-Type": "application/json" }
-});
+  await fetch("https://tabib-pulau.vercel.app/api/sheet", {
+    method: "POST",
+    body: JSON.stringify({
+      nama: getText("nama"),
+      penanggung: getText("penanggung"),
+      pegagan: getVal("pegagan"),
+      perban: getVal("perban"),
+      painkiller: getVal("painkiller"),
+      betadine: getVal("betadine"),
+      zatbesi: getVal("zatbesi"),
+      sayurkol: getVal("sayurkol"),
+      keterangan: getText("keterangan")
+    }),
+    headers: { "Content-Type": "application/json" }
+  });
 
   document.getElementById("modalIcon").textContent = "✔";
   document.getElementById("modalIcon").style.color = "#1877ff";
@@ -365,6 +367,6 @@ function showCustomAlert() {
 function hideCustomAlert() {
   document.getElementById('customAlert').style.display = 'none';
 }
-  </script>
+</script>
 </body>
 </html>
