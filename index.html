@@ -208,6 +208,21 @@
   <footer class="container">
     <small>Tabib Pulau © Cayo Perico #IndoPride</small>
   </footer>
+  
+  <div id="customAlert" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(40,48,68,0.15); z-index:9999; align-items:center; justify-content:center;">
+  <div style="background:#fff; border-radius:16px; box-shadow:0 8px 32px rgba(44,62,80,0.18); padding:2.1rem 1.5rem 1.4rem 1.5rem; max-width:90vw; min-width:260px; text-align:center; animation:pop .27s;">
+    <span style="font-size:2.5rem; display:block; margin-bottom:.5em; color:#1877ff;">&#10004;</span>
+    <div style="font-size:1.25rem; font-weight:700; color:#222; margin-bottom:0.2em;">Data berhasil direkap!</div>
+    <div style="font-size:.97rem; color:#667; margin-bottom:.9em;">Pengambilan stok kamu sudah masuk sistem.<br>Terima kasih 🙏</div>
+    <button onclick="hideCustomAlert()" style="margin-top:.5em; background:linear-gradient(90deg,#1877ff 20%,#55c6ff 100%);color:white;font-weight:600;border:none;padding:.6em 1.7em;border-radius:8px;box-shadow:0 2px 14px #bce6ff54;cursor:pointer;">Sip!</button>
+  </div>
+</div>
+<style>
+@keyframes pop {
+  from { transform:scale(.92); opacity:0;}
+  to   { transform:scale(1); opacity:1;}
+}
+</style>
 
   <script>
   const endpoint = "https://v1.nocodeapi.com/sayheysob/google_sheets/iRofLAbBmXmbbbQy?tabId=Anggota%20Tabib";
@@ -320,7 +335,7 @@ document.getElementById("stockForm").addEventListener("submit", async function(e
     body: JSON.stringify(data)
   });
 
-  alert("Data berhasil direkap!");
+  showCustomAlert();
   document.getElementById("stockForm").reset();
   document.getElementById("totalHarga").textContent = "Total Harga: Rp 0";
 
@@ -328,6 +343,12 @@ document.getElementById("stockForm").addEventListener("submit", async function(e
   submitBtn.disabled = false;
   submitBtn.innerHTML = "Sikat 🚀";
 });
+  function showCustomAlert() {
+  document.getElementById('customAlert').style.display = 'flex';
+}
+function hideCustomAlert() {
+  document.getElementById('customAlert').style.display = 'none';
+}
   </script>
 </body>
 </html>
