@@ -1,109 +1,323 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <title>Form Pengambilan Stok</title>
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Form Pengambilan Stok</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+  <!-- Icon Google Material Symbols -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" rel="stylesheet" />
   <style>
-    body {background: #23272a; color: #fff; font-family: 'Segoe UI', Arial, sans-serif;}
-    form {background: #2f3136; padding: 24px; border-radius: 8px; max-width: 420px; margin: 40px auto;}
-    label {display:block; margin: 10px 0 5px;}
-    input, select, textarea {width:100%; padding:8px; border-radius:5px; border:none; background:#40444b; color:#fff;}
-    button {background:#5865f2; color:#fff; border:none; padding:10px 0; border-radius:5px; font-weight:bold; width:100%; margin-top:20px;}
-    h2 {text-align:center;}
+    body {
+      background: linear-gradient(135deg,#e9f5ff 0%, #f9fafb 100%);
+      min-height: 100vh;
+      font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      margin: 0;
+    }
+    main.container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 90vh;
+    }
+    section {
+      background: #fff;
+      padding: 2.5rem 2rem 2rem 2rem;
+      border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(80,120,255,0.07), 0 2px 8px rgba(44,62,80,0.10);
+      max-width: 410px;
+      width: 100%;
+      transition: box-shadow .18s;
+      animation: fadein .6s;
+    }
+    section:hover {
+      box-shadow: 0 12px 32px rgba(80,120,255,0.16), 0 4px 16px rgba(44,62,80,0.15);
+    }
+    @keyframes fadein { from { opacity: 0; transform:translateY(24px);} to {opacity:1; transform:none;} }
+
+    .header-row {
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+      margin-bottom: 1.1rem;
+    }
+    .header-row img {
+      width: 54px;
+      height: 54px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(80,120,255,0.09);
+      background: #f2f8ff;
+    }
+    .header-row h2 {
+      margin: 0 0 .22rem 0;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      font-size: 1.35rem;
+      color: #2c3e50;
+    }
+    .header-row h3 {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 400;
+      color: #677;
+      opacity: 0.85;
+    }
+    form label {
+      font-weight: 500;
+      color: #447;
+      margin-top: 1rem;
+    }
+    select, input[type="number"] {
+      margin-bottom: 0.4rem;
+    }
+    .input-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: .55rem .75rem;
+      margin-top: .5rem;
+      margin-bottom: .2rem;
+    }
+    .input-icon-group {
+      position: relative;
+    }
+    .input-icon-group .material-symbols-rounded {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #a1b4d0;
+      font-size: 21px;
+      pointer-events: none;
+    }
+    .input-icon-group input {
+      padding-left: 2.1rem !important;
+      font-weight: 500;
+    }
+    #totalHarga {
+      font-weight: bold;
+      margin: .8rem 0 1.2rem 0;
+      font-size: 1.07rem;
+      color: #126fa3;
+      letter-spacing: 0.2px;
+      transition: color .15s;
+      background: #f5fcff;
+      border-radius: 7px;
+      padding: .35em 1em;
+      display: inline-block;
+    }
+    button[type="submit"] {
+      width: 100%;
+      font-size: 1.08rem;
+      font-weight: 600;
+      background: linear-gradient(95deg,#1877ff 10%, #55c6ff 95%);
+      color: white !important;
+      border: none;
+      border-radius: 8px;
+      padding: .95em 0;
+      box-shadow: 0 2px 16px #bae7ff56;
+      transition: background .2s, box-shadow .18s, scale .09s;
+      letter-spacing: 0.03em;
+    }
+    button[type="submit"]:hover {
+      background: linear-gradient(85deg,#1370e7 5%, #15bae2 90%);
+      scale:1.03;
+      box-shadow: 0 4px 20px #b9e5ff92;
+    }
+    footer.container {
+      margin-top: auto;
+      padding: 2rem 0 .8rem 0;
+      text-align: center;
+      font-size: .9rem;
+      opacity: .65;
+      color: #364e6e;
+    }
+    @media (max-width: 500px) {
+      main.container {
+        min-height: 100vh;
+        padding: 1rem 0;
+      }
+      section {
+        max-width: 98vw;
+        padding: 1.3rem 0.6rem 1.5rem 0.6rem;
+      }
+      .header-row h2 { font-size: 1.13rem; }
+      #totalHarga { font-size: .98rem;}
+      button[type="submit"] { font-size: .97rem;}
+    }
   </style>
 </head>
 <body>
-  <form id="stockForm">
-    <h2>Pengambilan Stok Baru</h2>
-    <label for="pemohon">Pemohon</label>
-    <input type="text" id="pemohon" required>
-    <label for="penanggungJawab">Penanggung Jawab</label>
-    <input type="text" id="penanggungJawab" required>
-    <label for="pegagan">Pegagan (unit)</label>
-    <input type="number" id="pegagan" min="0" value="0">
-    <label for="perban">Perban (unit)</label>
-    <input type="number" id="perban" min="0" value="0">
-    <label for="painkiller">Painkiller (unit)</label>
-    <input type="number" id="painkiller" min="0" value="0">
-    <label for="betadine">Betadine (unit)</label>
-    <input type="number" id="betadine" min="0" value="0">
-    <label for="zatbesi">Zat Besi (unit)</label>
-    <input type="number" id="zatbesi" min="0" value="0">
-    <label for="sayurkol">Sayur Kol (unit)</label>
-    <input type="number" id="sayurkol" min="0" value="0">
-    <label for="keterangan">Keterangan</label>
-    <textarea id="keterangan" rows="2"></textarea>
-    <button type="submit">Kirim ke Discord</button>
-  </form>
+  <main class="container">
+    <section>
+      <div class="header-row">
+        <img src="image/logo_tabib.png" alt="Cayo Perico Logo">
+        <div>
+          <h2>Form Pengambilan Stok</h2>
+          <h3>Isi data dengan benar biar pengurus nggak mumet 😁</h3>
+        </div>
+      </div>
+
+      <form id="stockForm" autocomplete="off">
+        <label for="nama">Nama Pengambil</label>
+        <select id="nama" name="nama" required></select>
+
+        <label for="penanggung">Penanggung Jawab</label>
+        <select id="penanggung" name="penanggung" required></select>
+
+        <label for="keterangan">Keterangan</label>
+        <select id="keterangan" name="keterangan" required></select>
+
+        <label>Jumlah Barang</label>
+        <div class="input-grid">
+          <div class="input-icon-group">
+            <span class="material-symbols-rounded">spa</span>
+            <input type="number" id="pegagan" name="Pegagan" placeholder="Pegagan (unit)" min="0">
+          </div>
+          <div class="input-icon-group">
+            <span class="material-symbols-rounded">healing</span>
+            <input type="number" id="perban" name="Perban" placeholder="Perban (unit)" min="0">
+          </div>
+          <div class="input-icon-group">
+            <span class="material-symbols-rounded">medication</span>
+            <input type="number" id="painkiller" name="Painkiller" placeholder="Painkiller (unit)" min="0">
+          </div>
+          <div class="input-icon-group">
+            <span class="material-symbols-rounded">local_hospital</span>
+            <input type="number" id="betadine" name="Betadine" placeholder="Betadine (unit)" min="0">
+          </div>
+          <div class="input-icon-group">
+            <span class="material-symbols-rounded">science</span>
+            <input type="number" id="zatbesi" name="Zat Besi" placeholder="Zat Besi (unit)" min="0">
+          </div>
+          <div class="input-icon-group">
+            <span class="material-symbols-rounded">grass</span>
+            <input type="number" id="sayurkol" name="Sayur Kol" placeholder="Sayur Kol (unit)" min="0">
+          </div>
+        </div>
+
+        <div id="totalHarga">Total Harga: Rp 0</div>
+
+        <button type="submit">Sikat 🚀</button>
+      </form>
+    </section>
+  </main>
+
+  <footer class="container">
+    <small>Tabib Pulau © Cayo Perico #IndoPride</small>
+  </footer>
+
   <script>
-    document.getElementById('stockForm').onsubmit = async function(e) {
-      e.preventDefault();
-      const pemohon = document.getElementById('pemohon').value;
-      const penanggungJawab = document.getElementById('penanggungJawab').value;
-      const pegagan = document.getElementById('pegagan').value;
-      const perban = document.getElementById('perban').value;
-      const painkiller = document.getElementById('painkiller').value;
-      const betadine = document.getElementById('betadine').value;
-      const zatbesi = document.getElementById('zatbesi').value;
-      const sayurkol = document.getElementById('sayurkol').value;
-      const keterangan = document.getElementById('keterangan').value;
+  const endpoint = "https://v1.nocodeapi.com/sayheysob/google_sheets/iRofLAbBmXmbbbQy?tabId=Anggota%20Tabib";
 
-      // Ambil waktu sekarang (WIB)
-      const waktuSekarang = new Date();
-      const waktuUTC = new Date(waktuSekarang.getTime() + (waktuSekarang.getTimezoneOffset() * 60000));
-      const waktuWIB = new Date(waktuUTC.getTime() + (7 * 60 * 60 * 1000)); // UTC+7
+  const prices = {
+    pegagan: 2500,
+    perban: 4000,
+    painkiller: 17500,
+    betadine: 10000,
+    zatbesi: 15000,
+    sayurkol: 10000
+  };
 
-      const hariID = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
-      const bulanID = [
-        "Januari","Februari","Maret","April","Mei","Juni",
-        "Juli","Agustus","September","Oktober","November","Desember"
-      ];
-      const tanggalFormatted = `${hariID[waktuWIB.getDay()]}, ${waktuWIB.getDate()} ${bulanID[waktuWIB.getMonth()]} ${waktuWIB.getFullYear()}`;
-      const jamFormatted = waktuWIB.toTimeString().slice(0,5);
+  function calculateTotal() {
+    const getVal = id => parseInt(document.getElementById(id).value) || 0;
+    const total =
+      getVal("pegagan") * prices.pegagan +
+      getVal("perban") * prices.perban +
+      getVal("painkiller") * prices.painkiller +
+      getVal("betadine") * prices.betadine +
+      getVal("zatbesi") * prices.zatbesi +
+      getVal("sayurkol") * prices.sayurkol;
 
-      const webhookUrl = "https://discord.com/api/webhooks/1364665385374191707/nBSRNthx10Qs9qDjoTn3DMObVqueld7ywxLBnz4DdopPiozCLzRcgjpu9eLH8K_yMvFV";
-      const data = {
-        "embeds": [
-          {
-            "color": 5793266,
-            "title": "📦 Pengambilan Stok Baru",
-            "fields": [
-              { "name": "Tanggal", "value": tanggalFormatted, "inline": false },
-              { "name": "Pukul", "value": jamFormatted, "inline": false },
-              { "name": "👤 Pemohon", "value": pemohon, "inline": false },
-              { "name": "🧑‍💼 Penanggung Jawab", "value": penanggungJawab, "inline": false },
-              { "name": "📋 Barang Diambil", "value": 
-                  `• Pegagan: ${pegagan} unit\n`+
-                  `• Perban: ${perban} unit\n`+
-                  `• Painkiller: ${painkiller} unit\n`+
-                  `• Betadine: ${betadine} unit\n`+
-                  `• Zat Besi: ${zatbesi} unit\n`+
-                  `• Sayur Kol: ${sayurkol} unit`, "inline": false 
-              },
-              { "name": "Keterangan", "value": keterangan ? keterangan : "-", "inline": false }
-            ],
-            "footer": { "text": `Tabib Pulau Cayo • ${jamFormatted}` }
-          }
-        ]
+    document.getElementById("totalHarga").textContent = "Total Harga: Rp " + total.toLocaleString("id-ID");
+    return total;
+  }
+
+  document.querySelectorAll("input[type='number']").forEach(input => {
+    input.addEventListener("input", calculateTotal);
+  });
+
+  async function populateDropdowns() {
+    try {
+      const res = await fetch(endpoint);
+      const result = await res.json();
+      const data = result.data;
+
+      const namaOptions = [...new Set(data.map(row => row["ANGGOTA TABIB"]).filter(Boolean))];
+      const penanggungOptions = [...new Set(data.map(row => row["PENGURUS"]).filter(Boolean))];
+      const keteranganOptions = [...new Set(data.map(row => row["KETERANGAN"]).filter(Boolean))];
+
+      const fillSelect = (id, options) => {
+        const select = document.getElementById(id);
+        select.innerHTML = "";
+        options.forEach(value => {
+          const option = document.createElement("option");
+          option.value = value;
+          option.textContent = value;
+          select.appendChild(option);
+        });
       };
 
-      try {
-        const res = await fetch(webhookUrl, {
-          method: "POST",
-          headers: {"Content-Type": "application/json"},
-          body: JSON.stringify(data)
-        });
-        if (res.ok) {
-          alert("Berhasil dikirim ke Discord!");
-          document.getElementById('stockForm').reset();
-        } else {
-          alert("Gagal mengirim ke Discord. Pastikan webhook benar.");
+      fillSelect("nama", namaOptions);
+      fillSelect("penanggung", penanggungOptions);
+      fillSelect("keterangan", keteranganOptions);
+    } catch (error) {
+      console.error("Gagal mengambil data:", error);
+    }
+  }
+
+  populateDropdowns();
+
+  document.getElementById("stockForm").addEventListener("submit", async function(event) {
+    event.preventDefault();
+
+    const getVal = id => parseInt(document.getElementById(id).value) || 0;
+    const getText = id => document.getElementById(id).value || "-";
+
+    const total = calculateTotal();
+    const now = new Date();
+    const tanggal = now.toLocaleDateString('id-ID');
+    const waktu = now.toLocaleTimeString('id-ID');
+
+    const data = {
+      embeds: [
+        {
+          title: "📦 Pengambilan Stok Barang",
+          color: 5814783,
+          fields: [
+            { name: "👤 Nama", value: getText("nama"), inline: true },
+            { name: "📋 Penanggung Jawab", value: getText("penanggung"), inline: true },
+            {
+              name: "📦 Barang", value:
+                `Pegagan: ${getVal("pegagan")}\n` +
+                `Perban: ${getVal("perban")}\n` +
+                `Painkiller: ${getVal("painkiller")}\n` +
+                `Betadine: ${getVal("betadine")}\n` +
+                `Zat Besi: ${getVal("zatbesi")}\n` +
+                `Sayur Kol: ${getVal("sayurkol")}`,
+              inline: false
+            },
+            { name: "💰 Total Harga", value: `Rp ${total.toLocaleString("id-ID")}`, inline: false },
+            { name: "🕒 Tanggal & Waktu", value: `${tanggal} - ${waktu}`, inline: false },
+            { name: "📝 Keterangan", value: getText("keterangan"), inline: false }
+          ],
+          footer: { text: "Tabib Pulau - Cayo Perico" }
         }
-      } catch (err) {
-        alert("Error mengirim ke Discord.");
-      }
+      ]
     };
+
+    await fetch("https://discord.com/api/webhooks/1364665385374191707/nBSRNthx10Qs9qDjoTn3DMObVqueld7ywxLBnz4DdopPiozCLzRcgjpu9eLH8K_yMvFV", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    });
+
+    alert("Data berhasil direkap!");
+    document.getElementById("stockForm").reset();
+    document.getElementById("totalHarga").textContent = "Total Harga: Rp 0";
+  });
   </script>
 </body>
 </html>
