@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Form Pengambilan Stok</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
-  <!-- Icon Google Material Symbols -->
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" rel="stylesheet" />
   <style>
     body {
@@ -147,6 +146,11 @@
       #totalHarga { font-size: .98rem;}
       button[type="submit"] { font-size: .97rem;}
     }
+    /* Modal Alert Animation */
+    @keyframes pop {
+      from { transform:scale(.92); opacity:0;}
+      to   { transform:scale(1); opacity:1;}
+    }
   </style>
 </head>
 <body>
@@ -159,17 +163,13 @@
           <h3>Isi data dengan benar biar pengurus nggak mumet 😁</h3>
         </div>
       </div>
-
       <form id="stockForm" autocomplete="off">
         <label for="nama">Nama Pengambil</label>
         <select id="nama" name="nama" required></select>
-
         <label for="penanggung">Penanggung Jawab</label>
         <select id="penanggung" name="penanggung" required></select>
-
         <label for="keterangan">Keterangan</label>
         <select id="keterangan" name="keterangan" required></select>
-
         <label>Jumlah Barang</label>
         <div class="input-grid">
           <div class="input-icon-group">
@@ -197,7 +197,6 @@
             <input type="number" id="sayurkol" name="Sayur Kol" placeholder="Sayur Kol (unit)" min="0">
           </div>
         </div>
-      
         <div id="totalHarga">Total Harga: Rp 0</div>
         <label for="token">Token Akses Hari Ini</label>
         <input type="text" id="token" name="token" pattern="\d{4}" maxlength="4" placeholder="Masukkan token hari ini" required>
@@ -210,21 +209,15 @@
     <small>Tabib Pulau © Cayo Perico #IndoPride</small>
   </footer>
   
+  <!-- MODAL ALERT -->
   <div id="customAlert" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(40,48,68,0.15); z-index:9999; align-items:center; justify-content:center;">
-  <div style="background:#fff; border-radius:16px; box-shadow:0 8px 32px rgba(44,62,80,0.18); padding:2.1rem 1.5rem 1.4rem 1.5rem; max-width:90vw; min-width:260px; text-align:center; animation:pop .27s;">
-    <span style="font-size:2.5rem; display:block; margin-bottom:.5em; color:#1877ff;">&#10004;</span>
-    <div style="font-size:1.25rem; font-weight:700; color:#222; margin-bottom:0.2em;">Data berhasil direkap!</div>
-    <div style="font-size:.97rem; color:#667; margin-bottom:.9em;">Pengambilan stok kamu sudah masuk sistem.<br>Terima kasih 🙏</div>
-    <button onclick="hideCustomAlert()" style="margin-top:.5em; background:linear-gradient(90deg,#1877ff 20%,#55c6ff 100%);color:white;font-weight:600;border:none;padding:.6em 1.7em;border-radius:8px;box-shadow:0 2px 14px #bce6ff54;cursor:pointer;">Sip!</button>
+    <div style="background:#fff; border-radius:16px; box-shadow:0 8px 32px rgba(44,62,80,0.18); padding:2.1rem 1.5rem 1.4rem 1.5rem; max-width:90vw; min-width:260px; text-align:center; animation:pop .27s;">
+      <span style="font-size:2.5rem; display:block; margin-bottom:.5em; color:#1877ff;">&#10004;</span>
+      <div class="font-weight-700" style="font-size:1.25rem; font-weight:700; color:#222; margin-bottom:0.2em;">Data berhasil direkap!</div>
+      <div class="font-weight-normal" style="font-size:.97rem; color:#667; margin-bottom:.9em;">Pengambilan stok kamu sudah masuk sistem.<br>Terima kasih 🙏</div>
+      <button onclick="hideCustomAlert()" style="margin-top:.5em; background:linear-gradient(90deg,#1877ff 20%,#55c6ff 100%);color:white;font-weight:600;border:none;padding:.6em 1.7em;border-radius:8px;box-shadow:0 2px 14px #bce6ff54;cursor:pointer;">Sip!</button>
+    </div>
   </div>
-</div>
-<style>
-@keyframes pop {
-  from { transform:scale(.92); opacity:0;}
-  to   { transform:scale(1); opacity:1;}
-}
-</style>
-
   <script>
 const anggotaEndpoint = "https://v1.nocodeapi.com/sayheysob/google_sheets/iRofLAbBmXmbbbQy?tabId=Anggota%20Tabib";
 const tokenEndpoint = "https://v1.nocodeapi.com/sayheysob/google_sheets/pExEanXyYErzsCpl?tabId=token";
@@ -312,10 +305,12 @@ document.getElementById("stockForm").addEventListener("submit", async function(e
   submitBtn.innerHTML = `<span class="material-symbols-rounded" style="vertical-align:middle;font-size:1.2em;">hourglass_top</span> Sabar bos, loading...`;
 
   const tokenVal = document.getElementById("token").value.trim();
+
+  // --- CEK TOKEN ---
   if (!await isTokenValid(tokenVal)) {
-    showCustomAlert();
     document.querySelector("#customAlert .font-weight-700").textContent = "Token salah!";
-    document.querySelector("#customAlert .font-weight-normal").textContent = "Token hari ini salah atau sudah expired.";
+    document.querySelector("#customAlert .font-weight-normal").textContent = "Coba tanyakan ke pengurus!";
+    showCustomAlert();
     submitBtn.disabled = false;
     submitBtn.innerHTML = "Sikat 🚀";
     return;
@@ -362,6 +357,8 @@ document.getElementById("stockForm").addEventListener("submit", async function(e
     body: JSON.stringify(data)
   });
 
+  document.querySelector("#customAlert .font-weight-700").textContent = "Data berhasil direkap!";
+  document.querySelector("#customAlert .font-weight-normal").textContent = "Pengambilan stok kamu sudah masuk sistem.<br>Terima kasih 🙏";
   showCustomAlert();
   document.getElementById("stockForm").reset();
   document.getElementById("totalHarga").textContent = "Total Harga: Rp 0";
@@ -376,6 +373,6 @@ function showCustomAlert() {
 function hideCustomAlert() {
   document.getElementById('customAlert').style.display = 'none';
 }
-</script>
+  </script>
 </body>
 </html>
