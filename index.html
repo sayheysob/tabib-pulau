@@ -226,82 +226,91 @@
 </style>
 
   <script>
-  const endpoint = "https://v1.nocodeapi.com/sayheysob/google_sheets/iRofLAbBmXmbbbQy?tabId=Anggota%20Tabib";
+const anggotaEndpoint = "https://v1.nocodeapi.com/sayheysob/google_sheets/iRofLAbBmXmbbbQy?tabId=Anggota%20Tabib";
+const tokenEndpoint = "https://v1.nocodeapi.com/sayheysob/google_sheets/pExEanXyYErzsCpl?tabId=token";
 
-  const prices = {
-    pegagan: 2500,
-    perban: 4000,
-    painkiller: 17500,
-    betadine: 10000,
-    zatbesi: 15000,
-    sayurkol: 10000
-  };
+const prices = {
+  pegagan: 2500,
+  perban: 4000,
+  painkiller: 17500,
+  betadine: 10000,
+  zatbesi: 15000,
+  sayurkol: 10000
+};
 
-  function calculateTotal() {
-    const getVal = id => parseInt(document.getElementById(id).value) || 0;
-    const total =
-      getVal("pegagan") * prices.pegagan +
-      getVal("perban") * prices.perban +
-      getVal("painkiller") * prices.painkiller +
-      getVal("betadine") * prices.betadine +
-      getVal("zatbesi") * prices.zatbesi +
-      getVal("sayurkol") * prices.sayurkol;
+function calculateTotal() {
+  const getVal = id => parseInt(document.getElementById(id).value) || 0;
+  const total =
+    getVal("pegagan") * prices.pegagan +
+    getVal("perban") * prices.perban +
+    getVal("painkiller") * prices.painkiller +
+    getVal("betadine") * prices.betadine +
+    getVal("zatbesi") * prices.zatbesi +
+    getVal("sayurkol") * prices.sayurkol;
 
-    document.getElementById("totalHarga").textContent = "Total Harga: Rp " + total.toLocaleString("id-ID");
-    return total;
+  document.getElementById("totalHarga").textContent = "Total Harga: Rp " + total.toLocaleString("id-ID");
+  return total;
+}
+
+document.querySelectorAll("input[type='number']").forEach(input => {
+  input.addEventListener("input", calculateTotal);
+});
+
+// --- FUNGSI DROPDOWN (Anggota Tabib) ---
+async function populateDropdowns() {
+  try {
+    const res = await fetch(anggotaEndpoint);
+    const result = await res.json();
+    const data = result.data;
+
+    const namaOptions = [...new Set(data.map(row => row["ANGGOTA TABIB"]).filter(Boolean))];
+    const penanggungOptions = [...new Set(data.map(row => row["PENGURUS"]).filter(Boolean))];
+    const keteranganOptions = [...new Set(data.map(row => row["KETERANGAN"]).filter(Boolean))];
+
+    const fillSelect = (id, options) => {
+      const select = document.getElementById(id);
+      select.innerHTML = "";
+      const placeholder = document.createElement("option");
+      placeholder.value = "";
+      placeholder.textContent = "Pilih...";
+      placeholder.disabled = true;
+      placeholder.selected = true;
+      select.appendChild(placeholder);
+      options.forEach(value => {
+        const option = document.createElement("option");
+        option.value = value;
+        option.textContent = value;
+        select.appendChild(option);
+      });
+    };
+
+    fillSelect("nama", namaOptions);
+    fillSelect("penanggung", penanggungOptions);
+    fillSelect("keterangan", keteranganOptions);
+  } catch (error) {
+    console.error("Gagal mengambil data anggota:", error);
   }
+}
+populateDropdowns();
 
-  document.querySelectorAll("input[type='number']").forEach(input => {
-    input.addEventListener("input", calculateTotal);
-  });
+// --- FUNGSI VALIDASI TOKEN ---
+async function isTokenValid(token) {
+  const res = await fetch(tokenEndpoint);
+  const result = await res.json();
+  const data = result.data;
+  if (!data || !data[0]) return false;
+  const tokenSheet = data[0].TOKEN;
+  return token === tokenSheet;
+}
 
-  async function isTokenValid(token) {
-      const res = await fetch("https://v1.nocodeapi.com/sayheysob/google_sheets/pExEanXyYErzsCpl?tabId=token");
-      const result = await res.json();
-      const data = result.data;
-      if (!data || !data[0]) return false;
-
-      const tokenSheet = data[0].TOKEN;      // Token hari ini di sheet (baris pertama)
-      const tanggalSheet = data[0].TANGGAL;  // Tanggal aktif (optional, hanya untuk info)
-
-      // Token valid hanya jika sama persis
-      return token === tokenSheet;
-      }
-
-      const namaOptions = [...new Set(data.map(row => row["ANGGOTA TABIB"]).filter(Boolean))];
-      const penanggungOptions = [...new Set(data.map(row => row["PENGURUS"]).filter(Boolean))];
-      const keteranganOptions = [...new Set(data.map(row => row["KETERANGAN"]).filter(Boolean))];
-
-      const fillSelect = (id, options) => {
-        const select = document.getElementById(id);
-        select.innerHTML = "";
-        options.forEach(value => {
-          const option = document.createElement("option");
-          option.value = value;
-          option.textContent = value;
-          select.appendChild(option);
-        });
-      };
-
-      fillSelect("nama", namaOptions);
-      fillSelect("penanggung", penanggungOptions);
-      fillSelect("keterangan", keteranganOptions);
-    } catch (error) {
-      console.error("Gagal mengambil data:", error);
-    }
-  }
-
-  populateDropdowns();
-
-  const submitBtn = document.querySelector('button[type="submit"]');
-
+// --- SUBMIT FORM ---
+const submitBtn = document.querySelector('button[type="submit"]');
 document.getElementById("stockForm").addEventListener("submit", async function(event) {
   event.preventDefault();
 
-  // Loading effect: disable button, change text
   submitBtn.disabled = true;
   submitBtn.innerHTML = `<span class="material-symbols-rounded" style="vertical-align:middle;font-size:1.2em;">hourglass_top</span> Sabar bos, loading...`;
-  
+
   const tokenVal = document.getElementById("token").value.trim();
   if (!await isTokenValid(tokenVal)) {
     showCustomAlert();
@@ -356,17 +365,17 @@ document.getElementById("stockForm").addEventListener("submit", async function(e
   showCustomAlert();
   document.getElementById("stockForm").reset();
   document.getElementById("totalHarga").textContent = "Total Harga: Rp 0";
-
-  // Kembalikan tombol ke keadaan semula
   submitBtn.disabled = false;
   submitBtn.innerHTML = "Sikat 🚀";
 });
-  function showCustomAlert() {
+
+// --- MODAL CUSTOM ALERT ---
+function showCustomAlert() {
   document.getElementById('customAlert').style.display = 'flex';
 }
 function hideCustomAlert() {
   document.getElementById('customAlert').style.display = 'none';
 }
-  </script>
+</script>
 </body>
 </html>
