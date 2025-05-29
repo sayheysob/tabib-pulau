@@ -292,8 +292,10 @@ async function isTokenValid(token) {
   const result = await res.json();
   const data = result.data;
   if (!data || !data[0]) return false;
-  const tokenSheet = data[0].TOKEN;
-  return token === tokenSheet;
+  // Baca dan bandingkan token dalam bentuk string, hapus spasi
+  const tokenSheet = String(data[0].TOKEN).trim();
+  console.log("Sheet token:", tokenSheet, "| User input:", token);
+  return String(token).trim() === tokenSheet;
 }
 
 // --- SUBMIT FORM ---
