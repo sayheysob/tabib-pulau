@@ -323,12 +323,14 @@ document.getElementById("stockForm").addEventListener("submit", async function(e
     alert("Token belum siap, silakan refresh halaman.");
     btn.disabled = false;
     btn.innerHTML = "Sikat 🚀";
+    resetButton(); 
     return;
   }
 
     if (inputToken !== window.tokenValid) {
     showModal("Token Salah!", "Kode token tidak cocok. Silakan tanya pengurus untuk kode yang benar.", "✖", "#ff4141");
-    resetButton(); return;
+    resetButton(); 
+    return;
     btn.disabled = false;
     btn.innerHTML = "Sikat 🚀";
     return;
@@ -338,6 +340,7 @@ document.getElementById("stockForm").addEventListener("submit", async function(e
     resetButton(); return;
     btn.disabled = false;
     btn.innerHTML = "Sikat 🚀";
+    resetButton(); 
     return;
   }
 
