@@ -302,6 +302,7 @@ document.getElementById("stockForm").addEventListener("submit", async function(e
     const now = new Date();
     return now.toISOString().split('T')[0]; // hasil: '2025-05-30'
 }
+  const today = getTodayYMD();
 
   if (!window.tokenValid || !window.tokenDate) {
     alert("Token belum siap, silakan refresh halaman.");
