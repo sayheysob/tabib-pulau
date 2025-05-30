@@ -292,7 +292,13 @@ function getTodayYMD() {
   const now = new Date();
   return now.toISOString().split('T')[0];
 }
-
+function showModal(judul, pesan, ikon, warna) {
+  document.getElementById("modalIcon").textContent = ikon;
+  document.getElementById("modalIcon").style.color = warna;
+  document.querySelector("#customAlert .font-weight-700").textContent = judul;
+  document.querySelector("#customAlert .font-weight-normal").innerHTML = pesan;
+  document.getElementById("customAlert").style.display = 'flex';
+}
 function showCustomAlert(msg = "Berhasil!") {
   document.getElementById('modalIcon').textContent = "✔";
   document.getElementById('modalIcon').style.color = "#1877ff";
@@ -320,15 +326,16 @@ document.getElementById("stockForm").addEventListener("submit", async function(e
     return;
   }
 
-  if (inputToken !== window.tokenValid) {
-    alert("❌ Token salah. Tanya pengurus.");
+    if (inputToken !== window.tokenValid) {
+    showModal("Token Salah!", "Kode token tidak cocok. Silakan tanya pengurus untuk kode yang benar.", "✖", "#ff4141");
+    resetButton(); return;
     btn.disabled = false;
     btn.innerHTML = "Sikat 🚀";
     return;
   }
-
-  if (today !== window.tokenDate) {
-    alert("❌ Token kadaluarsa. Minta token baru.");
+    if (today !== window.tokenDate) {
+    showModal("Token Kadaluarsa!", "Token hanya berlaku untuk hari ini.<br>Silakan minta token baru ke pengurus.", "✖", "#ff4141");
+    resetButton(); return;
     btn.disabled = false;
     btn.innerHTML = "Sikat 🚀";
     return;
