@@ -281,7 +281,7 @@ fetch('https://script.google.com/macros/s/AKfycbxu09evFMMAA0qQ-jYBT_iHiEg5rUIuti
       ketSelect.appendChild(option);
     });
 
-    window.tokenValid = data.token;
+    window.tokenValid = data.token.toString().trim();
     window.tokenDate = data.tanggal_token;
   })
   .catch(err => {
