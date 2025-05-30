@@ -164,12 +164,20 @@
         </div>
       </div>
       <form id="stockForm" autocomplete="off">
-        <label for="nama">Nama Pengambil</label>
-        <select id="nama" name="nama" required></select>
+        <<label for="nama">Nama Pengambil</label>
+        <select id="nama" name="nama" required>
+        <option value="" disabled selected>Pilih Nama Pengambil</option>
+        </select>
+
         <label for="penanggung">Penanggung Jawab</label>
-        <select id="penanggung" name="penanggung" required></select>
+        <select id="penanggung" name="penanggung" required>
+        <option value="" disabled selected>Pilih Penanggung Jawab</option>
+        </select>
+
         <label for="keterangan">Keterangan</label>
-        <select id="keterangan" name="keterangan" required></select>
+        <select id="keterangan" name="keterangan" required>
+        <option value="" disabled selected>Pilih Keterangan</option>
+        </select>
         <label>Jumlah Barang</label>
         <div class="input-grid">
           <div class="input-icon-group">
@@ -250,7 +258,7 @@ document.querySelectorAll("input[type='number']").forEach(input => {
 fetch('https://script.google.com/macros/s/AKfycbxu09evFMMAA0qQ-jYBT_iHiEg5rUIutiSpfRgmEZJjY56kkNpHf6QH_ptfDWbeaTpuQg/exec')
   .then(res => res.json())
   .then(data => {
-    // Isi dropdown Nama
+    // Nama
     let namaSelect = document.getElementById("nama");
     data.nama.forEach(nama => {
       let option = document.createElement("option");
@@ -258,7 +266,7 @@ fetch('https://script.google.com/macros/s/AKfycbxu09evFMMAA0qQ-jYBT_iHiEg5rUIuti
       option.textContent = nama;
       namaSelect.appendChild(option);
     });
-    // Isi dropdown Penanggung Jawab
+    // Penanggung Jawab
     let penanggungSelect = document.getElementById("penanggung");
     data.penanggung.forEach(pj => {
       let option = document.createElement("option");
@@ -266,7 +274,7 @@ fetch('https://script.google.com/macros/s/AKfycbxu09evFMMAA0qQ-jYBT_iHiEg5rUIuti
       option.textContent = pj;
       penanggungSelect.appendChild(option);
     });
-    // Isi dropdown Keterangan
+    // Keterangan
     let ketSelect = document.getElementById("keterangan");
     data.keterangan.forEach(ket => {
       let option = document.createElement("option");
@@ -274,8 +282,10 @@ fetch('https://script.google.com/macros/s/AKfycbxu09evFMMAA0qQ-jYBT_iHiEg5rUIuti
       option.textContent = ket;
       ketSelect.appendChild(option);
     });
-    // Data token bisa dipakai jika perlu
-    // console.log("Token:", data.token, "Tanggal:", data.tanggal_token);
+
+    // Simpan token & tanggal untuk validasi
+    window.tokenValid = data.token;
+    window.tokenDate = data.tanggal_token;
   })
   .catch(err => {
     alert("Gagal memuat data anggota: " + err);
@@ -359,6 +369,47 @@ document.getElementById("stockForm").addEventListener("submit", async function(e
   submitBtn.disabled = false;
   submitBtn.innerHTML = "Sikat 🚀";
 });
+
+function getTodayYMD() {
+  const now = new Date();
+  return now.toISOString().split('T')[0]; // hasil: '2025-05-30'
+}
+
+document.getElementById("stockForm").addEventListener("submit", function(event) {
+  event.preventDefault();
+
+  const inputToken = document.getElementById("token").value.trim();
+  const today = getTodayYMD();
+
+  if (!window.tokenValid || !window.tokenDate) {
+    alert("Token belum siap, silakan refresh halaman.");
+    return;
+  }
+  if (inputToken !== window.tokenValid) {
+    // Token salah
+    showModal("Token Salah!", "Token akses hari ini tidak cocok.<br>Silakan cek ulang kode token.", "✖", "#ff4141");
+    return;
+  }
+  if (today !== window.tokenDate) {
+    // Tanggal token tidak sesuai hari ini
+    showModal("Token Kadaluarsa!", "Token hanya berlaku untuk hari ini.<br>Silakan cek ulang token terbaru.", "✖", "#ff4141");
+    return;
+  }
+
+  // ... lanjutkan submit ke Discord/Google Sheets seperti biasa ...
+  showModal("Data berhasil direkap!", "Pengambilan stok kamu sudah masuk sistem. Terima kasih 🙏", "✔", "#1877ff");
+  document.getElementById("stockForm").reset();
+  document.getElementById("totalHarga").textContent = "Total Harga: Rp 0";
+});
+
+// Fungsi modal custom (pakai modal alert di HTML kamu)
+function showModal(judul, pesan, ikon, warna) {
+  document.getElementById("modalIcon").textContent = ikon;
+  document.getElementById("modalIcon").style.color = warna;
+  document.querySelector("#customAlert .font-weight-700").textContent = judul;
+  document.querySelector("#customAlert .font-weight-normal").innerHTML = pesan;
+  document.getElementById('customAlert').style.display = 'flex';
+}
 
 // --- MODAL CUSTOM ALERT ---
 function showCustomAlert() {
