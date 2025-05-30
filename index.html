@@ -227,132 +227,181 @@
     </div>
   </div>
   <script>
-    const prices = {
-      pegagan: 2500, perban: 4000, painkiller: 17500,
-      betadine: 10000, zatbesi: 15000, sayurkol: 10000
-    };
+const prices = {
+  pegagan: 2500,
+  perban: 4000,
+  painkiller: 17500,
+  betadine: 10000,
+  zatbesi: 15000,
+  sayurkol: 10000
+};
 
-    function calculateTotal() {
-      const getVal = id => parseInt(document.getElementById(id).value) || 0;
-      const total =
-        getVal("pegagan") * prices.pegagan +
-        getVal("perban") * prices.perban +
-        getVal("painkiller") * prices.painkiller +
-        getVal("betadine") * prices.betadine +
-        getVal("zatbesi") * prices.zatbesi +
-        getVal("sayurkol") * prices.sayurkol;
-      document.getElementById("totalHarga").textContent = "Total Harga: Rp " + total.toLocaleString("id-ID");
-      return total;
-    }
+function calculateTotal() {
+  const getVal = id => parseInt(document.getElementById(id).value) || 0;
+  const total =
+    getVal("pegagan") * prices.pegagan +
+    getVal("perban") * prices.perban +
+    getVal("painkiller") * prices.painkiller +
+    getVal("betadine") * prices.betadine +
+    getVal("zatbesi") * prices.zatbesi +
+    getVal("sayurkol") * prices.sayurkol;
 
-    document.querySelectorAll("input[type='number']").forEach(input => input.addEventListener("input", calculateTotal));
+  document.getElementById("totalHarga").textContent = "Total Harga: Rp " + total.toLocaleString("id-ID");
+  return total;
+}
 
-    fetch('https://script.google.com/macros/s/AKfycbxu09evFMMAA0qQ-jYBT_iHiEg5rUIutiSpfRgmEZJjY56kkNpHf6QH_ptfDWbeaTpuQg/exec')
-      .then(res => res.json())
-      .then(data => {
-        data.nama.forEach(n => document.getElementById("nama").innerHTML += `<option value="${n}">${n}</option>`);
-        data.penanggung.forEach(p => document.getElementById("penanggung").innerHTML += `<option value="${p}">${p}</option>`);
-        data.keterangan.forEach(k => document.getElementById("keterangan").innerHTML += `<option value="${k}">${k}</option>`);
-        window.tokenValid = data.token;
-        window.tokenDate = data.tanggal_token;
-      });
+document.querySelectorAll("input[type='number']").forEach(input => {
+  input.addEventListener("input", calculateTotal);
+});
 
-    function getTodayYMD() {
-      const now = new Date();
-      return now.toISOString().split('T')[0];
-    }
-
-    document.getElementById("stockForm").addEventListener("submit", async function(event) {
-      event.preventDefault();
-      const submitBtn = document.getElementById("submitBtn");
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = `<span class="material-symbols-rounded">hourglass_top</span> Loading...`;
-
-      const inputToken = document.getElementById("token").value.trim();
-      const today = getTodayYMD();
-
-      if (!window.tokenValid || !window.tokenDate) {
-        showModal("Token belum siap", "Silakan refresh halaman.", "⚠️");
-        resetButton(); return;
-      }
-
-      if (inputToken !== window.tokenValid) {
-        showModal("Token Salah", "Cek ulang dengan pengurus.", "❌");
-        resetButton(); return;
-      }
-
-      if (today !== window.tokenDate) {
-        showModal("Token Kadaluarsa", "Token hanya berlaku hari ini.", "⏰");
-        resetButton(); return;
-      }
-
-      const getVal = id => parseInt(document.getElementById(id).value) || 0;
-      const getText = id => document.getElementById(id).value || "-";
-      const total = calculateTotal();
-
-      const discordData = {
-        embeds: [{
-          title: "📦 Pengambilan Stok Barang",
-          color: 5814783,
-          fields: [
-            { name: "👤 Nama", value: getText("nama"), inline: true },
-            { name: "📋 Penanggung Jawab", value: getText("penanggung"), inline: true },
-            { name: "📦 Barang", value:
-              `Pegagan: ${getVal("pegagan")}\nPerban: ${getVal("perban")}\nPainkiller: ${getVal("painkiller")}\nBetadine: ${getVal("betadine")}\nZat Besi: ${getVal("zatbesi")}\nSayur Kol: ${getVal("sayurkol")}` },
-            { name: "💰 Total Harga", value: `Rp ${total.toLocaleString("id-ID")}` },
-            { name: "📝 Keterangan", value: getText("keterangan") }
-          ]
-        }]
-      };
-
-      try {
-        await fetch("https://discord.com/api/webhooks/1364665385374191707/nBSRNthx10Qs9qDjoTn3DMObVqueld7ywxLBnz4DdopPiozCLzRcgjpu9eLH8K_yMvFV", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(discordData)
-        });
-
-        await fetch("https://tabib-pulau.vercel.app/api/sheet", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            nama: getText("nama"),
-            penanggung: getText("penanggung"),
-            pegagan: getVal("pegagan"),
-            perban: getVal("perban"),
-            painkiller: getVal("painkiller"),
-            betadine: getVal("betadine"),
-            zatbesi: getVal("zatbesi"),
-            sayurkol: getVal("sayurkol"),
-            keterangan: getText("keterangan")
-          })
-        });
-
-        showModal("Berhasil!", "Pengambilan stok berhasil direkam 🙏", "✅");
-        document.getElementById("stockForm").reset();
-        document.getElementById("totalHarga").textContent = "Total Harga: Rp 0";
-      } catch (err) {
-        showModal("Gagal Mengirim!", "Periksa koneksi atau coba ulangi.", "❌");
-      }
-      resetButton();
+fetch('https://script.google.com/macros/s/AKfycbxu09evFMMAA0qQ-jYBT_iHiEg5rUIutiSpfRgmEZJjY56kkNpHf6QH_ptfDWbeaTpuQg/exec')
+  .then(res => res.json())
+  .then(data => {
+    let namaSelect = document.getElementById("nama");
+    data.nama.forEach(nama => {
+      let option = document.createElement("option");
+      option.value = nama;
+      option.textContent = nama;
+      namaSelect.appendChild(option);
     });
 
-    function showModal(judul, pesan, ikon) {
-      document.getElementById("modalTitle").textContent = judul;
-      document.getElementById("modalMessage").textContent = pesan;
-      document.getElementById("modalIcon").textContent = ikon;
-      document.getElementById("customAlert").style.display = 'flex';
-    }
+    let penanggungSelect = document.getElementById("penanggung");
+    data.penanggung.forEach(pj => {
+      let option = document.createElement("option");
+      option.value = pj;
+      option.textContent = pj;
+      penanggungSelect.appendChild(option);
+    });
 
-    function hideCustomAlert() {
-      document.getElementById("customAlert").style.display = 'none';
-    }
+    let ketSelect = document.getElementById("keterangan");
+    data.keterangan.forEach(ket => {
+      let option = document.createElement("option");
+      option.value = ket;
+      option.textContent = ket;
+      ketSelect.appendChild(option);
+    });
 
-    function resetButton() {
-      const btn = document.getElementById("submitBtn");
-      btn.disabled = false;
-      btn.innerHTML = "Sikat 🚀";
-    }
-  </script>
+    window.tokenValid = data.token;
+    window.tokenDate = data.tanggal_token;
+  })
+  .catch(err => {
+    alert("Gagal memuat data anggota: " + err);
+  });
+
+function getTodayYMD() {
+  const now = new Date();
+  return now.toISOString().split('T')[0];
+}
+
+function showCustomAlert(msg = "Berhasil!") {
+  document.getElementById('modalIcon').textContent = "✔";
+  document.getElementById('modalIcon').style.color = "#1877ff";
+  document.querySelector("#customAlert .font-weight-700").textContent = msg;
+  document.querySelector("#customAlert .font-weight-normal").innerHTML = "Pengambilan stok kamu sudah masuk sistem.<br>Terima kasih 🙏";
+  document.getElementById('customAlert').style.display = 'flex';
+}
+function hideCustomAlert() {
+  document.getElementById('customAlert').style.display = 'none';
+}
+
+document.getElementById("stockForm").addEventListener("submit", async function(event) {
+  event.preventDefault();
+  const btn = document.querySelector('button[type="submit"]');
+  btn.disabled = true;
+  btn.innerHTML = `<span class="material-symbols-rounded" style="vertical-align:middle;font-size:1.2em;">hourglass_top</span> Sabar bos, loading...`;
+
+  const inputToken = document.getElementById("token").value.trim();
+  const today = getTodayYMD();
+
+  if (!window.tokenValid || !window.tokenDate) {
+    alert("Token belum siap, silakan refresh halaman.");
+    btn.disabled = false;
+    btn.innerHTML = "Sikat 🚀";
+    return;
+  }
+
+  if (inputToken !== window.tokenValid) {
+    alert("❌ Token salah. Tanya pengurus.");
+    btn.disabled = false;
+    btn.innerHTML = "Sikat 🚀";
+    return;
+  }
+
+  if (today !== window.tokenDate) {
+    alert("❌ Token kadaluarsa. Minta token baru.");
+    btn.disabled = false;
+    btn.innerHTML = "Sikat 🚀";
+    return;
+  }
+
+  const getVal = id => parseInt(document.getElementById(id).value) || 0;
+  const getText = id => document.getElementById(id).value || "-";
+
+  const total = calculateTotal();
+  const now = new Date();
+  const tanggal = now.toLocaleDateString('id-ID');
+  const waktu = now.toLocaleTimeString('id-ID');
+
+  const discordData = {
+    embeds: [
+      {
+        title: "📦 Pengambilan Stok Barang",
+        color: 5814783,
+        fields: [
+          { name: "👤 Nama", value: getText("nama"), inline: true },
+          { name: "📋 Penanggung Jawab", value: getText("penanggung"), inline: true },
+          {
+            name: "📦 Barang", value:
+              `Pegagan: ${getVal("pegagan")}\n` +
+              `Perban: ${getVal("perban")}\n` +
+              `Painkiller: ${getVal("painkiller")}\n` +
+              `Betadine: ${getVal("betadine")}\n` +
+              `Zat Besi: ${getVal("zatbesi")}\n` +
+              `Sayur Kol: ${getVal("sayurkol")}`,
+            inline: false
+          },
+          { name: "💰 Total Harga", value: `Rp ${total.toLocaleString("id-ID")}`, inline: false },
+          { name: "🕒 Tanggal & Waktu", value: `${tanggal} - ${waktu}`, inline: false },
+          { name: "📝 Keterangan", value: getText("keterangan"), inline: false }
+        ],
+        footer: { text: "Tabib Pulau - Cayo Perico" }
+      }
+    ]
+  };
+
+  try {
+    await fetch("https://discord.com/api/webhooks/1364665385374191707/nBSRNthx10Qs9qDjoTn3DMObVqueld7ywxLBnz4DdopPiozCLzRcgjpu9eLH8K_yMvFV", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(discordData)
+    });
+
+    await fetch("https://tabib-pulau.vercel.app/api/sheet", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        nama: getText("nama"),
+        penanggung: getText("penanggung"),
+        pegagan: getVal("pegagan"),
+        perban: getVal("perban"),
+        painkiller: getVal("painkiller"),
+        betadine: getVal("betadine"),
+        zatbesi: getVal("zatbesi"),
+        sayurkol: getVal("sayurkol"),
+        keterangan: getText("keterangan")
+      })
+    });
+
+    showCustomAlert("Data berhasil direkap!");
+    document.getElementById("stockForm").reset();
+    document.getElementById("totalHarga").textContent = "Total Harga: Rp 0";
+  } catch (err) {
+    alert("❌ Gagal kirim data. Coba lagi nanti.");
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = "Sikat 🚀";
+});
+</script>
 </body>
 </html>
