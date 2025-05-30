@@ -313,9 +313,11 @@ function hideCustomAlert() {
 
 document.getElementById("stockForm").addEventListener("submit", async function(event) {
   event.preventDefault();
+function resetButton() {
   const btn = document.querySelector('button[type="submit"]');
-  btn.disabled = true;
-  btn.innerHTML = `<span class="material-symbols-rounded" style="vertical-align:middle;font-size:1.2em;">hourglass_top</span> Sabar bos, loading...`;
+  btn.disabled = false;
+  btn.innerHTML = "Sikat 🚀";
+}
 
   const inputToken = document.getElementById("token").value.trim();
   const today = getTodayYMD();
