@@ -298,7 +298,10 @@ document.getElementById("stockForm").addEventListener("submit", async function(e
   event.preventDefault();
 
   const inputToken = document.getElementById("token").value.trim();
-  const today = getTodayYMD();
+  function getTodayYMD() {
+    const now = new Date();
+    return now.toISOString().split('T')[0]; // hasil: '2025-05-30'
+}
 
   if (!window.tokenValid || !window.tokenDate) {
     alert("Token belum siap, silakan refresh halaman.");
