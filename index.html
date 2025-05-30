@@ -297,18 +297,33 @@ const submitBtn = document.querySelector('button[type="submit"]');
 document.getElementById("stockForm").addEventListener("submit", async function(event) {
   event.preventDefault();
 
-  submitBtn.disabled = true;
-  submitBtn.innerHTML = `<span class="material-symbols-rounded" style="vertical-align:middle;font-size:1.2em;">hourglass_top</span> Sabar bos, loading...`;
+  const inputToken = document.getElementById("token").value.trim();
+  const today = getTodayYMD();
 
-  // Ambil value
+  if (!window.tokenValid || !window.tokenDate) {
+    alert("Token belum siap, silakan refresh halaman.");
+    return;
+  }
+
+  if (inputToken !== window.tokenValid) {
+    showModal("Token Salah!", "Coba Tanya pada pengurus!.<br>Silakan cek ulang kode token.", "✖", "#ff4141");
+    return;
+  }
+
+  if (today !== window.tokenDate) {
+    showModal("Token Kadaluarsa!", "Token hanya berlaku untuk hari ini.<br>Silakan cek ulang token terbaru.", "✖", "#ff4141");
+    return;
+  }
+
+  // Token valid -> lanjut submit data
   const getVal = id => parseInt(document.getElementById(id).value) || 0;
   const getText = id => document.getElementById(id).value || "-";
 
-  // KIRIM KE DISCORD (tetap seperti script kamu)
   const total = calculateTotal();
   const now = new Date();
   const tanggal = now.toLocaleDateString('id-ID');
   const waktu = now.toLocaleTimeString('id-ID');
+
   const discordData = {
     embeds: [
       {
@@ -336,15 +351,21 @@ document.getElementById("stockForm").addEventListener("submit", async function(e
     ]
   };
 
-  await fetch("https://discord.com/api/webhooks/1364665385374191707/nBSRNthx10Qs9qDjoTn3DMObVqueld7ywxLBnz4DdopPiozCLzRcgjpu9eLH8K_yMvFV", {
+  const submitBtn = document.querySelector('button[type="submit"]');
+  submitBtn.disabled = true;
+  submitBtn.innerHTML = `<span class="material-symbols-rounded" style="vertical-align:middle;font-size:1.2em;">hourglass_top</span> Sabar bos, loading...`;
+
+  // Kirim ke Discord
+  await fetch("https://discord.com/api/webhooks/...", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(discordData)
   });
-  
-  // KIRIM DATA KE GOOGLE SHEETS VIA APPS SCRIPT
+
+  // Kirim ke Google Sheets
   await fetch("https://tabib-pulau.vercel.app/api/sheet", {
     method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       nama: getText("nama"),
       penanggung: getText("penanggung"),
@@ -355,8 +376,7 @@ document.getElementById("stockForm").addEventListener("submit", async function(e
       zatbesi: getVal("zatbesi"),
       sayurkol: getVal("sayurkol"),
       keterangan: getText("keterangan")
-    }),
-    headers: { "Content-Type": "application/json" }
+    })
   });
 
   document.getElementById("modalIcon").textContent = "✔";
@@ -369,47 +389,6 @@ document.getElementById("stockForm").addEventListener("submit", async function(e
   submitBtn.disabled = false;
   submitBtn.innerHTML = "Sikat 🚀";
 });
-
-function getTodayYMD() {
-  const now = new Date();
-  return now.toISOString().split('T')[0]; // hasil: '2025-05-30'
-}
-
-document.getElementById("stockForm").addEventListener("submit", function(event) {
-  event.preventDefault();
-
-  const inputToken = document.getElementById("token").value.trim();
-  const today = getTodayYMD();
-
-  if (!window.tokenValid || !window.tokenDate) {
-    alert("Token belum siap, silakan refresh halaman.");
-    return;
-  }
-  if (inputToken !== window.tokenValid) {
-    // Token salah
-    showModal("Token Salah!", "Coba Tanya pada pengurus!.<br>Silakan cek ulang kode token.", "✖", "#ff4141");
-    return;
-  }
-  if (today !== window.tokenDate) {
-    // Tanggal token tidak sesuai hari ini
-    showModal("Token Kadaluarsa!", "Token hanya berlaku untuk hari ini.<br>Silakan cek ulang token terbaru.", "✖", "#ff4141");
-    return;
-  }
-
-  // ... lanjutkan submit ke Discord/Google Sheets seperti biasa ...
-  showModal("Data berhasil direkap!", "Pengambilan stok kamu sudah masuk sistem. Terima kasih 🙏", "✔", "#1877ff");
-  document.getElementById("stockForm").reset();
-  document.getElementById("totalHarga").textContent = "Total Harga: Rp 0";
-});
-
-// Fungsi modal custom (pakai modal alert di HTML kamu)
-function showModal(judul, pesan, ikon, warna) {
-  document.getElementById("modalIcon").textContent = ikon;
-  document.getElementById("modalIcon").style.color = warna;
-  document.querySelector("#customAlert .font-weight-700").textContent = judul;
-  document.querySelector("#customAlert .font-weight-normal").innerHTML = pesan;
-  document.getElementById('customAlert').style.display = 'flex';
-}
 
 // --- MODAL CUSTOM ALERT ---
 function showCustomAlert() {
