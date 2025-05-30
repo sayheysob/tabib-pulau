@@ -356,7 +356,7 @@ document.getElementById("stockForm").addEventListener("submit", async function(e
   submitBtn.innerHTML = `<span class="material-symbols-rounded" style="vertical-align:middle;font-size:1.2em;">hourglass_top</span> Sabar bos, loading...`;
 
   // Kirim ke Discord
-  await fetch("https://discord.com/api/webhooks/...", {
+  await fetch("https://discord.com/api/webhooks/1364665385374191707/nBSRNthx10Qs9qDjoTn3DMObVqueld7ywxLBnz4DdopPiozCLzRcgjpu9eLH8K_yMvFV", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(discordData)
