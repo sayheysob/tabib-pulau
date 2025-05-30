@@ -305,6 +305,7 @@ function showCustomAlert(msg = "Berhasil!") {
   document.querySelector("#customAlert .font-weight-700").textContent = msg;
   document.querySelector("#customAlert .font-weight-normal").innerHTML = "Pengambilan stok kamu sudah masuk sistem.<br>Terima kasih 🙏";
   document.getElementById('customAlert').style.display = 'flex';
+  resetButton();
 }
 function hideCustomAlert() {
   document.getElementById('customAlert').style.display = 'none';
