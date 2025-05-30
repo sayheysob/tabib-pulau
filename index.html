@@ -405,15 +405,18 @@ function resetButton() {
       })
     });
 
+    if (!res1.ok || !res2.ok) throw new Error("Gagal kirim salah satu data");
+    
     showCustomAlert("Data berhasil direkap!");
     document.getElementById("stockForm").reset();
     document.getElementById("totalHarga").textContent = "Total Harga: Rp 0";
-  } catch (err) {
+    
+    } catch (err) {
     alert("❌ Gagal kirim data. Coba lagi nanti.");
-  }
+    }
 
-  btn.disabled = false;
-  btn.innerHTML = "Sikat 🚀";
+    btn.disabled = false;
+    btn.innerHTML = "Sikat 🚀";
 });
 </script>
 </body>
